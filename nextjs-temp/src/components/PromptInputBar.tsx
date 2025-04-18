@@ -26,7 +26,6 @@ export default function PromptInputBar({
     canAnalyze,
     isAnalyzing,
     buttonText = 'Analyze',
-    placeholder = 'Type additional instructions for analyzing your document...',
     helperText = 'Press Enter to submit • Shift+Enter for new line',
     errorMessage = '',
     outputLength = 500,
@@ -168,34 +167,33 @@ export default function PromptInputBar({
                     </div>
                 )}
 
-                <div className={`relative rounded-xl shadow-lg border ${displayError ? 'border-red-300 dark:border-red-700' : 'border-gray-200 dark:border-gray-700'} bg-white dark:bg-[#2C2C2C]`}>
-                    <textarea
-                        ref={textareaRef}
-                        placeholder={placeholder}
-                        value={customPrompt}
-                        onChange={handlePromptChange}
-                        onKeyDown={handleKeyDown}
-                        disabled={isAnalyzing}
-                        className={`w-full px-4 py-3 pr-24 text-base resize-none overflow-hidden focus:outline-none rounded-xl bg-white dark:bg-[#2C2C2C] text-gray-900 dark:text-white ${displayError ? 'focus:ring-red-500 border-red-300 dark:border-red-700' : ''}`}
-                        style={{ maxHeight: '150px', minHeight: '52px' }}
-                        rows={1}
-                        aria-label="Custom analysis instructions"
-                        aria-invalid={!!displayError}
-                    />
-
-                    {/* Settings button */}
+                <div className={`relative max-w-3xl mx-auto flex items-center shadow-md border ${displayError ? 'border-red-300 dark:border-red-700' : 'border-gray-200 dark:border-gray-700'} bg-white dark:bg-[#2C2C2C] rounded-full px-4 py-2 sm:px-6`}>
+                    {/* Settings button - moved to the left side */}
                     <button
                         onClick={() => setShowSettings(prev => !prev)}
                         disabled={isAnalyzing}
                         title="Output settings"
                         aria-label="Output settings"
-                        className={`absolute right-14 bottom-2 p-2 rounded-lg flex items-center justify-center transition-colors ${!isAnalyzing
+                        className={`p-2 rounded-full flex items-center justify-center transition-colors min-w-11 min-h-11 ${!isAnalyzing
                             ? 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
                             : 'text-gray-400 dark:text-gray-600 cursor-not-allowed'
                             }`}
                     >
                         <SettingsIcon />
                     </button>
+
+                    <textarea
+                        ref={textareaRef}
+                        value={customPrompt}
+                        onChange={handlePromptChange}
+                        onKeyDown={handleKeyDown}
+                        disabled={isAnalyzing}
+                        className={`flex-1 px-4 py-2 text-base resize-none overflow-hidden focus:outline-none bg-transparent text-gray-900 dark:text-white ${displayError ? 'focus:ring-red-500' : ''}`}
+                        style={{ maxHeight: '150px', minHeight: '36px' }}
+                        rows={1}
+                        aria-label="Type a message"
+                        aria-invalid={!!displayError}
+                    />
 
                     {/* Submit button */}
                     <button
@@ -213,7 +211,7 @@ export default function PromptInputBar({
                         disabled={isAnalyzing}
                         title={canAnalyze ? `Press Enter to ${buttonText.toLowerCase()}` : "Upload a document first"}
                         aria-label={buttonText}
-                        className={`absolute right-2 bottom-2 p-2 rounded-lg flex items-center justify-center text-white transition-colors ${!isAnalyzing
+                        className={`p-2.5 rounded-full flex items-center justify-center text-white transition-colors min-w-11 min-h-11 ${!isAnalyzing
                             ? 'bg-primary hover:bg-primary-dark focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-gray-800'
                             : 'bg-gray-400 dark:bg-gray-600 cursor-not-allowed'
                             }`}

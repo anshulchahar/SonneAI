@@ -53,6 +53,11 @@ export async function POST(req: NextRequest) {
         const customPrompt = formData.get('customPrompt') as string | null;
         console.log(`Custom prompt provided: ${customPrompt ? 'Yes' : 'No'}`);
 
+        // Get output length if provided (default to 500 if not specified)
+        const outputLengthStr = formData.get('outputLength') as string | null;
+        const outputLength = outputLengthStr ? parseInt(outputLengthStr, 10) : 500;
+        console.log(`Output length setting: ${outputLength}`);
+
         console.log(`Processing ${files.length} files:`, files.map(f => `${f.name} (${f.size} bytes, type: ${f.type})`));
 
         try {
@@ -102,8 +107,8 @@ export async function POST(req: NextRequest) {
                 console.log('Initializing Gemini service...');
                 const geminiService = new GeminiService();
 
-                console.log(`Sending ${texts.length} documents to Gemini API for analysis...`);
-                const analysisText = await geminiService.analyzeDocuments(texts, customPrompt);
+                console.log(`Sending ${texts.length} documents to Gemini API for analysis with output length: ${outputLength}...`);
+                const analysisText = await geminiService.analyzeDocuments(texts, customPrompt, outputLength);
 
                 console.log('Parsing Gemini analysis response...');
                 analysisResult = GeminiService.parseAnalysisResponse(analysisText);

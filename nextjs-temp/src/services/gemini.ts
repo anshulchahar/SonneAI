@@ -125,9 +125,9 @@ export class GeminiService {
     }
 
     // Process text documents and generate analysis
-    async analyzeDocuments(documents: string[], customPrompt?: string | null): Promise<string> {
+    async analyzeDocuments(documents: string[], customPrompt?: string | null, outputLength: number = 500): Promise<string> {
         try {
-            console.log(`Using Gemini ${this.modelName} with API version v1`);
+            console.log(`Using Gemini ${this.modelName} with API version v1 and output length ${outputLength}`);
 
             // Format the documents for the prompt
             const formattedDocs = documents.map((doc, i) =>
@@ -162,14 +162,33 @@ export class GeminiService {
             // Replace the document placeholder
             const prompt = basePrompt.replace('{text}', documents.length > 1 ? formattedDocs : documents[0]);
 
+            // Calculate max tokens based on output length setting
+            // Scale between 1024 tokens (brief) and 4096 tokens (detailed)
+            const minTokens = 1024;
+            const maxTokens = 4096;
+            const scaleFactor = (outputLength - 100) / 900; // Convert from 100-1000 range to 0-1 range
+            const maxOutputTokens = Math.round(minTokens + scaleFactor * (maxTokens - minTokens));
+
+            console.log(`Using maxOutputTokens: ${maxOutputTokens} based on output length: ${outputLength}`);
+
+            // Add output length instruction to the prompt
+            const lengthInstruction = outputLength < 300
+                ? "Provide a brief and concise analysis. Keep your response short."
+                : outputLength > 700
+                    ? "Provide a detailed and comprehensive analysis. Include extensive details."
+                    : "Provide a balanced analysis with moderate detail.";
+
+            const promptWithLengthInstructions = `${prompt}\n\nOutput Length Instructions: ${lengthInstruction}`;
+
             try {
                 // First try using the SDK
                 console.log('Attempting to use the Google Generative AI SDK...');
+
                 const result = await this.model.generateContent({
-                    contents: [{ role: 'user', parts: [{ text: prompt }] }],
+                    contents: [{ role: 'user', parts: [{ text: promptWithLengthInstructions }] }],
                     generationConfig: {
                         temperature: ANALYSIS_OPTIONS.TEMPERATURE,
-                        maxOutputTokens: ANALYSIS_OPTIONS.MAX_OUTPUT_TOKENS,
+                        maxOutputTokens: maxOutputTokens,
                     }
                 });
 
@@ -184,10 +203,10 @@ export class GeminiService {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: prompt }] }],
+                        contents: [{ parts: [{ text: promptWithLengthInstructions }] }],
                         generationConfig: {
                             temperature: ANALYSIS_OPTIONS.TEMPERATURE,
-                            maxOutputTokens: ANALYSIS_OPTIONS.MAX_OUTPUT_TOKENS,
+                            maxOutputTokens: maxOutputTokens,
                         }
                     })
                 });
