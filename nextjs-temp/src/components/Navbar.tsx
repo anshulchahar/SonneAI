@@ -35,14 +35,14 @@ export default function Navbar() {
                         <div className="flex-shrink-0 flex items-center">
                             <Link href="/" className="flex items-center">
                                 <Image
-                                    src="/solva.png"
-                                    alt="DocAnalyze Logo"
+                                    src="/sonne.png"
+                                    alt="Sonne Logo"
                                     width={32}
                                     height={32}
                                     className="h-8 w-auto"
                                 />
                                 <span className="ml-2 text-lg font-semibold text-gray-900 dark:text-white">
-                                    DocAnalyze
+                                    Sonne
                                 </span>
                             </Link>
                         </div>

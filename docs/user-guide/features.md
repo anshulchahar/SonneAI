@@ -1,12 +1,12 @@
-# Solva Features
+# Sonne Features
 
-This page provides a comprehensive overview of the features available in Solva.
+This page provides a comprehensive overview of the features available in Sonne.
 
 ## PDF Processing Features
 
 ### Text Extraction
 
-Solva uses PyPDF to extract text content from PDF documents with high accuracy. The text extraction:
+Sonne uses PyPDF to extract text content from PDF documents with high accuracy. The text extraction:
 
 - Preserves document structure where possible
 - Handles multi-column layouts
@@ -27,7 +27,7 @@ The application can extract the following metadata from PDF documents:
 
 ### Content Summarization
 
-Using Google's Gemini API, Solva can generate concise summaries of document content, highlighting:
+Using Google's Gemini API, Sonne can generate concise summaries of document content, highlighting:
 
 - Key topics and themes
 - Main arguments or points
@@ -60,7 +60,7 @@ Ask specific questions about document content:
 
 ## API Features
 
-Solva provides a RESTful API for integration with other systems:
+Sonne provides a RESTful API for integration with other systems:
 
 - Document upload endpoint
 - Analysis request endpoints

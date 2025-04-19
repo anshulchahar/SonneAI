@@ -60,13 +60,13 @@ export default function Navigation({ history = [] }: NavigationProps) {
                             <div className="flex-shrink-0 flex items-center">
                                 <Link href="/" className="flex items-center">
                                     <Image
-                                        src="/solva.png"
+                                        src="/sonne.png"
                                         width={32}
                                         height={32}
-                                        alt="Solva"
+                                        alt="Sonne"
                                         className="h-8 w-auto"
                                     />
-                                    <span className="ml-2 font-bold text-xl text-gray-900 dark:text-white">Solva</span>
+                                    <span className="ml-2 font-bold text-xl text-gray-900 dark:text-white">Sonne</span>
                                 </Link>
                             </div>
                         </div>

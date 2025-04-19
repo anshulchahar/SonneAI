@@ -1,4 +1,4 @@
-name: DocAnalyze CI
+name: Sonne CI
 
 on:
   push:

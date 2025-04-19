@@ -32,7 +32,7 @@ export function truncateText(text: string, maxLength: number): string {
 
 export function createAnalysisFilename(format: string): string {
     const date = new Date().toISOString().split('T')[0];
-    return `docanalyze-analysis-${date}.${format}`;
+    return `sonne-analysis-${date}.${format}`;
 }
 
 export function formatErrorMessage(error: unknown): string {

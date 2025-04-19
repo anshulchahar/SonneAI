@@ -1,6 +1,6 @@
 ---
 name: Feature Request
-about: Suggest a new feature for DocAnalyze
+about: Suggest a new feature for Sonne
 title: '[FEATURE] '
 labels: enhancement
 assignees: ''

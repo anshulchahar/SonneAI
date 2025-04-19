@@ -1,6 +1,6 @@
-site_name: Solva
-site_description: Documentation for the Solva application
-site_url: https://anshulchahar.github.io/solva/
+site_name: Sonne
+site_description: Documentation for the Sonne application
+site_url: https://anshulchahar.github.io/sonne/
 
 theme:
   name: material
@@ -26,8 +26,8 @@ theme:
     - search.highlight
     - content.code.copy
 
-repo_name: solva
-repo_url: https://github.com/anshulchahar/solva
+repo_name: sonne
+repo_url: https://github.com/anshulchahar/sonne
 
 markdown_extensions:
   - pymdownx.highlight:

@@ -8,7 +8,7 @@ async function migrateData() {
     try {
         // Open the old SQLite database
         const oldDb = await open({
-            filename: '../docanalyze.db',
+            filename: '../sonne.db',
             driver: sqlite3.Database
         });
 

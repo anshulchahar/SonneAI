@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This is a test markdown document used to verify that the DocAnalyze application can properly process markdown files.
+This is a test markdown document used to verify that the Sonne application can properly process markdown files.
 
 ## Features
 
@@ -20,7 +20,7 @@ function testFunction() {
 
 ## Content Analysis
 
-This document should be processed by the DocAnalyze application, which will:
+This document should be processed by the Sonne application, which will:
 
 1. Extract the text content from this markdown file
 2. Send it to the Gemini API for analysis
@@ -28,4 +28,4 @@ This document should be processed by the DocAnalyze application, which will:
 
 ## Conclusion
 
-If you can see an analysis of this document in the DocAnalyze interface, the markdown processing functionality is working correctly. 
+If you can see an analysis of this document in the Sonne interface, the markdown processing functionality is working correctly. 

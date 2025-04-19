@@ -27,7 +27,6 @@ export default function AnalysisResults({ analysis }: AnalysisResultsProps) {
         <div className="bg-white dark:bg-[var(--card)] shadow-lg dark:shadow-md border border-gray-100 dark:border-[var(--border)] rounded-lg overflow-hidden w-full mb-8 transition-colors duration-200">
             <div className="p-4 sm:p-6 md:p-8 space-y-6">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-[var(--card-foreground)]">Analysis Results</h2>
                     <DownloadButton analysisData={analysis} className="w-full md:w-auto" />
                 </div>
 

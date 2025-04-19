@@ -1,6 +1,6 @@
-# Contributing to Solva
+# Contributing to Sonne
 
-Thank you for your interest in contributing to Solva! This document provides guidelines and instructions to help you get started.
+Thank you for your interest in contributing to Sonne! This document provides guidelines and instructions to help you get started.
 
 ## Code of Conduct
 
@@ -20,8 +20,8 @@ By participating in this project, you agree to abide by our [Code of Conduct](CO
 1.  Fork the repository on GitHub
 2.  Clone your fork locally:
     ```bash
-    git clone https://github.com/YOUR-USERNAME/solva.git
-    cd solva/nextjs-temp # Navigate into the Next.js project directory
+    git clone https://github.com/YOUR-USERNAME/sonne.git
+    cd sonne/nextjs-temp # Navigate into the Next.js project directory
     ```
 3.  Set up the development environment:
     ```bash
@@ -100,4 +100,4 @@ By participating in this project, you agree to abide by our [Code of Conduct](CO
 ### Questions or Need Help?
 Feel free to open an issue with your questions or reach out to the maintainers.
 
-Thank you for contributing to Solva!
+Thank you for contributing to Sonne!

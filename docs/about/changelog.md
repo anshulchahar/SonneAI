@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to Solva will be documented in this file.
+All notable changes to Sonne will be documented in this file.
 
 ## [Unreleased]
 

@@ -1,6 +1,6 @@
 # PDF Processor
 
-This page documents the PDF processing functionality available in Solva.
+This page documents the PDF processing functionality available in Sonne.
 
 ## PDF Service Module
 

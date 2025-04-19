@@ -13,7 +13,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'DocAnalyze - AI Document Analysis',
+  title: 'Sonne - AI Document Analysis',
   description: 'Advanced AI-powered document analysis for professionals.',
 };
 
