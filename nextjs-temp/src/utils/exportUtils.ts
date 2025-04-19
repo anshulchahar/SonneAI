@@ -48,10 +48,6 @@ export const exportToPdf = (data: AnalysisData): void => {
         doc.setFontSize(20);
         doc.text(data.title, margin, yPosition);
         yPosition += 12;
-    } else {
-        doc.setFontSize(20);
-        doc.text('Analysis Results', margin, yPosition);
-        yPosition += 12;
     }
 
     // Add timestamp
@@ -173,8 +169,6 @@ export const exportToMarkdown = (data: AnalysisData): void => {
     // Add title
     if (data.title) {
         markdown += `# ${data.title}\n\n`;
-    } else {
-        markdown += `# Analysis Results\n\n`;
     }
 
     // Add timestamp
@@ -225,7 +219,7 @@ export const exportToDocx = async (data: AnalysisData): Promise<void> => {
             children: [
                 // Title
                 new Paragraph({
-                    text: data.title || 'Analysis Results',
+                    text: data.title,
                     heading: HeadingLevel.HEADING_1,
                     alignment: AlignmentType.CENTER,
                 }),

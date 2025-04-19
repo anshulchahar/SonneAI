@@ -211,10 +211,6 @@ export default function Home() {
                   </div>
                 ) : (
                   <>
-                    <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                      Document Analysis
-                    </h2>
-
                     <FileUpload
                       files={files}
                       onFilesAdded={handleFilesAdded}
@@ -293,7 +289,6 @@ export default function Home() {
               <div className="space-y-6 shadow-sm rounded-lg p-6 dark:bg-[#1E1E1E] bg-gray-50">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-2 sm:space-y-0">
                   <div>
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Analysis Results</h2>
                     {customPromptUsed && (
                       <p className="text-sm text-primary dark:text-primary-light mt-1">
                         Custom instructions were applied to this analysis
