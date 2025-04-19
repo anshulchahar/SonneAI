@@ -18,7 +18,7 @@
     }
   },
   "dependencies": {
-    "@auth/core": "0.34.2",
+    "@auth/core": "0.38.0",
     "@auth/prisma-adapter": "^2.8.0",
     "@emailjs/browser": "^4.4.1",
     "@google/generative-ai": "^0.2.0",
