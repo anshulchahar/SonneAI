@@ -25,22 +25,22 @@ export default function TermsPage() {
                                     <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Terms of Service</h2>
                                     <div className="prose dark:prose-invert max-w-none">
                                         <p className="text-gray-700 dark:text-gray-200">
-                                            By using the DocAnalyze service, you agree to be bound by the following terms and conditions.
+                                            By using the Sonne service, you agree to be bound by the following terms and conditions.
                                         </p>
 
                                         <h3 className="text-xl font-semibold text-gray-900 dark:text-white mt-6 mb-3">1. Acceptance of Terms</h3>
                                         <p className="text-gray-700 dark:text-gray-200">
-                                            By accessing or using DocAnalyze, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our service.
+                                            By accessing or using Sonne, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our service.
                                         </p>
 
                                         <h3 className="text-xl font-semibold text-gray-900 dark:text-white mt-6 mb-3">2. Description of Service</h3>
                                         <p className="text-gray-700 dark:text-gray-200">
-                                            DocAnalyze provides AI-powered document analysis services. We reserve the right to modify, suspend, or discontinue any aspect of the service at any time.
+                                            Sonne provides AI-powered document analysis services. We reserve the right to modify, suspend, or discontinue any aspect of the service at any time.
                                         </p>
 
                                         <h3 className="text-xl font-semibold text-gray-900 dark:text-white mt-6 mb-3">3. User Accounts</h3>
                                         <p className="text-gray-700 dark:text-gray-200">
-                                            To use certain features of DocAnalyze, you may need to create an account. You are responsible for maintaining the confidentiality of your account information and for all activities that occur under your account.
+                                            To use certain features of Sonne, you may need to create an account. You are responsible for maintaining the confidentiality of your account information and for all activities that occur under your account.
                                         </p>
                                     </div>
                                 </section>
@@ -49,7 +49,7 @@ export default function TermsPage() {
                                     <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Privacy Policy</h2>
                                     <div className="prose dark:prose-invert max-w-none">
                                         <p className="text-gray-700 dark:text-gray-200">
-                                            At DocAnalyze, we take your privacy seriously. This policy explains how we collect, use, and protect your information.
+                                            At Sonne, we take your privacy seriously. This policy explains how we collect, use, and protect your information.
                                         </p>
 
                                         <h3 className="text-xl font-semibold text-gray-900 dark:text-white mt-6 mb-3">1. Information Collection</h3>

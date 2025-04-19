@@ -1,6 +1,6 @@
 # Gemini API Integration
 
-This page documents the Google Gemini API integration in Solva.
+This page documents the Google Gemini API integration in Sonne.
 
 ## Gemini Service Module
 

@@ -1,12 +1,12 @@
-# Getting Started with Solva
+# Getting Started with Sonne
 
-This guide will help you install, configure, and start using Solva for your document analysis needs.
+This guide will help you install, configure, and start using Sonne for your document analysis needs.
 
 ## Installation
 
 ### Prerequisites
 
-Before installing Solva, ensure you have the following:
+Before installing Sonne, ensure you have the following:
 
 - Node.js 18.x or higher
 - npm or yarn package manager
@@ -15,8 +15,8 @@ Before installing Solva, ensure you have the following:
 ### Step 1: Clone the Repository
 
 ```bash
-git clone https://github.com/anshulchahar/solva.git
-cd solva
+git clone https://github.com/anshulchahar/sonne.git
+cd sonne
 ```
 
 ### Step 2: Install Dependencies
@@ -96,7 +96,7 @@ pnpm start
 
 ## Next Steps
 
-- Learn about the different [Features](features.md) available in Solva
+- Learn about the different [Features](features.md) available in Sonne
 - See [Usage Examples](examples.md) for common use cases
 - Explore the [API Reference](../api-reference/app-routes.md) for programmatic usage
 - Check out the [Development Guide](../development/contributing.md) to contribute to the project

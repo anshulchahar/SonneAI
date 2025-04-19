@@ -1,6 +1,6 @@
 ---
 name: Bug Report
-about: Report a bug in DocAnalyze
+about: Report a bug in Sonne
 title: '[BUG] '
 labels: bug
 assignees: ''

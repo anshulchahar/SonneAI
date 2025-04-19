@@ -1,8 +1,8 @@
 Test Plain Text Document
 
-This is a test plain text document used to verify that the DocAnalyze application can properly process .txt files.
+This is a test plain text document used to verify that the Sonne application can properly process .txt files.
 
-The DocAnalyze application should be able to:
+The Sonne application should be able to:
 - Extract the content from this text file
 - Process it through the Gemini API
 - Generate a meaningful analysis

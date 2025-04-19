@@ -1,6 +1,6 @@
-# Solva (Next.js Version)
+# Sonne (Next.js Version)
 
-Welcome to Solva! This application leverages AI to provide insightful analysis of your PDF documents. It's built using modern web technologies for a fast, responsive, and feature-rich experience.
+Welcome to Sonne! This application leverages AI to provide insightful analysis of your PDF documents. It's built using modern web technologies for a fast, responsive, and feature-rich experience.
 
 ## Features
 
@@ -42,7 +42,7 @@ Follow these steps to set up the project locally for development.
     ```bash
     # Replace <repository-url> with the actual URL
     git clone <repository-url>
-    cd docanalyze
+    cd sonne
     ```
 
 2.  **Install Dependencies:**

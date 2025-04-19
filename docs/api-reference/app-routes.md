@@ -1,6 +1,6 @@
 # Application Routes Reference
 
-This page documents the Next.js application routes and API endpoints available in Solva.
+This page documents the Next.js application routes and API endpoints available in Sonne.
 
 ## Web Interface Routes
 

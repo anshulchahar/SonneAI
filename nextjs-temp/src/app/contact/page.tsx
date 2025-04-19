@@ -144,7 +144,7 @@ export default function ContactPage() {
             subject: subjectOptions.find(option => option.value === formData.subject)?.label || formData.subject,
             message: formData.message,
             // Add these additional fields that might be expected by your template
-            to_name: "Solva Support Team",
+            to_name: "Sonne Support Team",
             from_name: formData.name,
             reply_to: formData.email
         };
@@ -182,7 +182,7 @@ export default function ContactPage() {
         {
             icon: <EnvelopeIcon className="h-6 w-6" />,
             title: 'Email',
-            description: 'support@docanalyze.example.com',
+            description: 'support@sonne.example.com',
             detail: 'We&apos;ll respond within 24 hours'
         },
         {

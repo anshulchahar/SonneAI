@@ -1,10 +1,10 @@
-# Solva Documentation
+# Sonne Documentation
 
-Welcome to the official documentation for Solva, a document analysis application that leverages AI to extract, process, and analyze information from PDF documents.
+Welcome to the official documentation for Sonne, a document analysis application that leverages AI to extract, process, and analyze information from PDF documents.
 
 ## Overview
 
-Solva combines the power of PDF processing libraries with Google's Gemini API to provide intelligent document analysis. The application is built with Next.js 14 and provides both a web interface and API endpoints for document processing.
+Sonne combines the power of PDF processing libraries with Google's Gemini API to provide intelligent document analysis. The application is built with Next.js 14 and provides both a web interface and API endpoints for document processing.
 
 ## Key Features
 
@@ -17,7 +17,7 @@ Solva combines the power of PDF processing libraries with Google's Gemini API to
 
 ## Project Structure
 
-Solva follows a modern Next.js application structure:
+Sonne follows a modern Next.js application structure:
 
 - **`src/app`**: Contains the application routes and pages
 - **`src/components`**: Reusable React components
@@ -28,12 +28,12 @@ Solva follows a modern Next.js application structure:
 
 ## Getting Started
 
-To start using Solva, see the [Getting Started](user-guide/getting-started.md) guide.
+To start using Sonne, see the [Getting Started](user-guide/getting-started.md) guide.
 
 ## License
 
-Solva is released under the license included in the [repository](about/license.md).
+Sonne is released under the license included in the [repository](about/license.md).
 
 ## Source Code
 
-The source code is available on [GitHub](https://github.com/anshulchahar/solva).
+The source code is available on [GitHub](https://github.com/anshulchahar/sonne).

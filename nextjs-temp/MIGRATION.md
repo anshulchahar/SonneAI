@@ -1,6 +1,6 @@
-# Solva Migration Guide
+# Sonne Migration Guide
 
-This document provides instructions for migrating from the Flask version of Solva to the Next.js version.
+This document provides instructions for migrating from the Flask version of Sonne to the Next.js version.
 
 ## Migration Steps
 

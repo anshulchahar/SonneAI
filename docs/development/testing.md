@@ -1,10 +1,10 @@
 # Testing Guide
 
-This guide provides information about testing the Solva application.
+This guide provides information about testing the Sonne application.
 
 ## Test Structure
 
-The Solva test suite is divided into several categories:
+The Sonne test suite is divided into several categories:
 
 - **Unit Tests**: Test individual components in isolation
 - **Integration Tests**: Test interactions between multiple components

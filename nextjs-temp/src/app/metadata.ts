@@ -2,14 +2,14 @@ import { Metadata } from 'next';
 
 const metadata: Metadata = {
     title: {
-        default: 'Solva - AI Document Analysis',
-        template: '%s | Solva',
+        default: 'Sonne - AI Document Analysis',
+        template: '%s | Sonne',
     },
     description: 'AI-powered document analysis tool for extracting insights from PDF documents',
     keywords: ['PDF analysis', 'AI document analysis', 'text extraction', 'document comparison', 'Gemini AI'],
-    authors: [{ name: 'Solva Team' }],
-    creator: 'Solva',
-    publisher: 'Solva',
+    authors: [{ name: 'Sonne Team' }],
+    creator: 'Sonne',
+    publisher: 'Sonne',
     robots: {
         index: true,
         follow: true,
@@ -17,22 +17,22 @@ const metadata: Metadata = {
     openGraph: {
         type: 'website',
         locale: 'en_US',
-        url: 'https://solva.vercel.app',
-        siteName: 'Solva',
-        title: 'Solva - AI Document Analysis',
+        url: 'https://sonne.vercel.app',
+        siteName: 'Sonne',
+        title: 'Sonne - AI Document Analysis',
         description: 'AI-powered document analysis tool for extracting insights from PDF documents',
         images: [
             {
                 url: '/og-image.png',
                 width: 1200,
                 height: 630,
-                alt: 'Solva - AI Document Analysis',
+                alt: 'Sonne - AI Document Analysis',
             },
         ],
     },
     twitter: {
         card: 'summary_large_image',
-        title: 'Solva - AI Document Analysis',
+        title: 'Sonne - AI Document Analysis',
         description: 'AI-powered document analysis tool for extracting insights from PDF documents',
         images: ['/og-image.png'],
     },

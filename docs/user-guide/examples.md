@@ -1,6 +1,6 @@
 # Usage Examples
 
-This page provides practical examples of how to use Solva for various document analysis tasks.
+This page provides practical examples of how to use Sonne for various document analysis tasks.
 
 ## Web Interface Examples
 
@@ -33,7 +33,7 @@ This page provides practical examples of how to use Solva for various document a
 import requests
 
 # API endpoint
-url = "https://your-solva-instance.com/api/analyze"
+url = "https://your-sonne-instance.com/api/analyze"
 
 # Upload file and request analysis
 files = {"document": open("example.pdf", "rb")}
@@ -53,7 +53,7 @@ print(results["entities"])
 import requests
 
 # API endpoint
-url = "https://your-solva-instance.com/api/analyze"
+url = "https://your-sonne-instance.com/api/analyze"
 
 # Upload file and request custom analysis
 files = {"document": open("report.pdf", "rb")}
@@ -83,7 +83,7 @@ import requests
 import os
 
 # API endpoint
-url = "https://your-solva-instance.com/api/batch"
+url = "https://your-sonne-instance.com/api/batch"
 
 # Prepare multiple files
 files = []
@@ -97,7 +97,7 @@ response = requests.post(url, files=files, data=data)
 batch_id = response.json()["batch_id"]
 
 # Check status and retrieve results when ready
-status_url = f"https://your-solva-instance.com/api/batch/{batch_id}"
+status_url = f"https://your-sonne-instance.com/api/batch/{batch_id}"
 status_response = requests.get(status_url)
 results = status_response.json()
 

@@ -52,7 +52,7 @@ jobs:
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_TITLE: "Security Scan Failed"
-          SLACK_MESSAGE: "Security scan failed for Next.js DocAnalyze project"
+          SLACK_MESSAGE: "Security scan failed for Next.js Sonne project"
 
   dependency-review:
     runs-on: ubuntu-latest
