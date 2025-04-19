@@ -8,7 +8,6 @@ interface OutputLengthSliderProps {
   min?: number;
   max?: number;
   step?: number;
-  label?: string;
 }
 
 export default function OutputLengthSlider({
@@ -16,8 +15,7 @@ export default function OutputLengthSlider({
   onChange,
   min = 100,
   max = 3000,
-  step = 100,
-  label = 'Output Length'
+  step = 100
 }: OutputLengthSliderProps) {
   const [currentValue, setCurrentValue] = useState(value);
 

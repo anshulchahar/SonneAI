@@ -35,7 +35,6 @@ export default function PromptInputBar({
     const [localError, setLocalError] = useState('');
     const { isOpen } = useSidebar(); // Get sidebar state to adjust position
     const [isMobile, setIsMobile] = useState(false);
-    const [showSettings, setShowSettings] = useState(false);
 
     // Check if we're on a mobile device
     useEffect(() => {

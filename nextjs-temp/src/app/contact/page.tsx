@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import emailjs from '@emailjs/browser';
 import Navigation from '@/components/Navigation';
 import { useSidebar } from '@/contexts/SidebarContext';
-import { EnvelopeIcon, PhoneIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline';
 import CustomSelect, { SelectOption } from '@/components/CustomSelect';
 import ValidatedInput from '@/components/ValidatedInput';
 import ErrorMessage from '@/components/ErrorMessage';
@@ -177,27 +176,6 @@ export default function ContactPage() {
                 setSubmitStatus('error');
             });
     };
-
-    const contactMethods = [
-        {
-            icon: <EnvelopeIcon className="h-6 w-6" />,
-            title: 'Email',
-            description: 'support@sonne.example.com',
-            detail: 'We&apos;ll respond within 24 hours'
-        },
-        {
-            icon: <PhoneIcon className="h-6 w-6" />,
-            title: 'Phone',
-            description: '+1 (555) 123-4567',
-            detail: 'Monday-Friday, 9AM-5PM ET'
-        },
-        {
-            icon: <ChatBubbleLeftRightIcon className="h-6 w-6" />,
-            title: 'Live Chat',
-            description: 'Available on our website',
-            detail: 'During business hours'
-        }
-    ];
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-[#1E1E1E] transition-colors duration-200">
