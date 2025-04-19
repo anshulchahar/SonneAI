@@ -1,8 +1,8 @@
 // Test script to verify Output Length functionality
-const fs = require('fs');
-const path = require('path');
-const FormData = require('form-data');
-const fetch = require('node-fetch');
+import fs from 'fs';
+import path from 'path';
+import FormData from 'form-data';
+import fetch from 'node-fetch';
 
 // Paths are relative to the project root
 const TEST_FILE_PATH = path.join(__dirname, '..', 'test-document.md');
