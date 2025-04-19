@@ -21,7 +21,7 @@
     "@auth/core": "0.34.2",
     "@auth/prisma-adapter": "^2.8.0",
     "@emailjs/browser": "^4.4.1",
-    "@google/generative-ai": "^0.2.0",
+    "@google/generative-ai": "^0.24.0",
     "@headlessui/react": "^1.7.17",
     "@heroicons/react": "^2.2.0",
     "@prisma/client": "^5.3.1",
