@@ -20,7 +20,7 @@ export default function OutputLengthSlider({
   label = 'Output Length'
 }: OutputLengthSliderProps) {
   const [currentValue, setCurrentValue] = useState(value);
-  
+
   // Update local state when prop changes
   useEffect(() => {
     setCurrentValue(value);
@@ -31,10 +31,10 @@ export default function OutputLengthSlider({
     setCurrentValue(newValue);
     onChange(newValue);
   };
-  
+
   // Calculate the percentage for dynamic styling
   const percentage = ((currentValue - min) / (max - min)) * 100;
-  
+
   // Labels for the slider
   const lengthLabels = {
     [min]: 'Brief',
@@ -42,16 +42,9 @@ export default function OutputLengthSlider({
   };
 
   return (
-    <div className="w-full">
-      <div className="flex justify-between items-center mb-2">
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-          {label}
-        </label>
-        <span className="text-sm text-gray-500 dark:text-gray-400">
-          {currentValue} characters
-        </span>
-      </div>
-      <div className="relative">
+    <div className="flex flex-col items-center h-full">
+      <div className="relative h-64 flex flex-col items-center">
+        <span className="text-xs text-gray-500 dark:text-gray-400 mb-2">{lengthLabels[max]}</span>
         <input
           type="range"
           min={min}
@@ -59,15 +52,14 @@ export default function OutputLengthSlider({
           step={step}
           value={currentValue}
           onChange={handleChange}
-          className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-primary"
+          className="w-2 h-full bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-primary"
           style={{
-            background: `linear-gradient(to right, var(--color-primary) 0%, var(--color-primary) ${percentage}%, var(--border) ${percentage}%, var(--border) 100%)`
+            background: `linear-gradient(to bottom, var(--color-primary) 0%, var(--color-primary) ${percentage}%, var(--border) ${percentage}%, var(--border) 100%)`,
+            transform: 'rotate(0deg)',
+            WebkitAppearance: 'slider-vertical'
           }}
         />
-        <div className="flex justify-between mt-1 text-xs text-gray-500 dark:text-gray-400">
-          <span>{lengthLabels[min]}</span>
-          <span>{lengthLabels[max]}</span>
-        </div>
+        <span className="text-xs text-gray-500 dark:text-gray-400 mt-2">{lengthLabels[min]}</span>
       </div>
     </div>
   );
