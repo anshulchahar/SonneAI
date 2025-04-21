@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { AnalysisResult, AnalysisHistory } from '@/types/api';
+import { AnalysisData } from '@/types/analysis';
 import AnalysisResults from '@/components/AnalysisResults';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import ErrorDisplay from '@/components/ErrorDisplay';
@@ -21,6 +22,41 @@ export default function AnalysisDetailPage() {
     const [error, setError] = useState<string | null>(null);
     const { isOpen } = useSidebar();
 
+    // Use useCallback to memoize the fetchData function
+    const fetchData = useCallback(async () => {
+        try {
+            // Fetch both analysis details and history in parallel
+            const [analysisResponse, historyResponse] = await Promise.all([
+                fetch(`/api/analysis/${id}`),
+                fetch('/api/history', {
+                    headers: { 'Cache-Control': 'no-cache' }
+                })
+            ]);
+
+            if (!analysisResponse.ok) {
+                const data = await analysisResponse.json();
+                throw new Error(data.error || 'Failed to fetch analysis');
+            }
+
+            if (!historyResponse.ok) {
+                console.error('Failed to fetch history, will continue with analysis only');
+            }
+
+            const analysisData = await analysisResponse.json();
+            setAnalysis(analysisData);
+
+            // If history fetch was successful, set it
+            if (historyResponse.ok) {
+                const historyData = await historyResponse.json();
+                setHistory(historyData);
+            }
+        } catch (error) {
+            setError(error instanceof Error ? error.message : 'An error occurred');
+        } finally {
+            setLoading(false);
+        }
+    }, [id]); // Add id as dependency since it's used inside fetchData
+
     useEffect(() => {
         if (status === 'loading') return;
 
@@ -30,115 +66,82 @@ export default function AnalysisDetailPage() {
             return;
         }
 
-        async function fetchData() {
-            try {
-                // Fetch both analysis details and history in parallel
-                const [analysisResponse, historyResponse] = await Promise.all([
-                    fetch(`/api/analysis/${id}`),
-                    fetch('/api/history', {
-                        headers: { 'Cache-Control': 'no-cache' }
-                    })
-                ]);
-
-                if (!analysisResponse.ok) {
-                    const data = await analysisResponse.json();
-                    throw new Error(data.error || 'Failed to fetch analysis');
-                }
-
-                if (!historyResponse.ok) {
-                    console.error('Failed to fetch history, will continue with analysis only');
-                }
-
-                const analysisData = await analysisResponse.json();
-                setAnalysis(analysisData);
-
-                // If history fetch was successful, set it
-                if (historyResponse.ok) {
-                    const historyData = await historyResponse.json();
-                    setHistory(historyData);
-                }
-            } catch (error) {
-                setError(error instanceof Error ? error.message : 'An error occurred');
-            } finally {
-                setLoading(false);
-            }
-        }
-
         fetchData();
-    }, [id, session, status]);
+    }, [id, session, status, fetchData]); // Add fetchData to the dependency array
 
     if (status === 'loading' || loading) {
         return <LoadingSpinner fullScreen message="Loading analysis..." />;
     }
 
-    if (!session) {
-        return (
-            <ErrorDisplay
-                message="Please sign in to view this analysis"
-                fullScreen
-                action={{ label: 'Sign In', href: '/api/auth/signin' }}
-            />
-        );
-    }
-
     if (error) {
         return (
-            <ErrorDisplay
-                message={error}
-                fullScreen
-                action={{ label: 'Back to Home', href: '/' }}
-            />
+            <>
+                <Navigation history={history} onHistoryUpdated={fetchData} />
+                <div className={`pt-16 ${isOpen ? 'pl-64' : 'pl-16'} transition-all duration-300 ease-in-out`}>
+                    <div className="px-4 sm:px-6 lg:px-8 py-6">
+                        <ErrorDisplay message={error} />
+                        <div className="mt-6 flex justify-center">
+                            <Link
+                                href="/"
+                                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-dark"
+                            >
+                                Return to Home
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            </>
         );
     }
 
     if (!analysis) {
         return (
-            <ErrorDisplay
-                message="Analysis not found"
-                fullScreen
-                action={{ label: 'Back to Home', href: '/' }}
-            />
+            <>
+                <Navigation history={history} onHistoryUpdated={fetchData} />
+                <div className={`pt-16 ${isOpen ? 'pl-64' : 'pl-16'} transition-all duration-300 ease-in-out`}>
+                    <div className="px-4 sm:px-6 lg:px-8 py-6">
+                        <ErrorDisplay message="Analysis not found" />
+                        <div className="mt-6 flex justify-center">
+                            <Link
+                                href="/"
+                                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-dark"
+                            >
+                                Return to Home
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            </>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-[#1E1E1E] transition-colors duration-200">
-            <Navigation history={history} />
-
-            <main className={`pt-16 pb-8 w-full transition-all duration-300 ease-in-out ${isOpen ? 'pl-64' : 'pl-16'}`}>
-                <div className="px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 w-full">
-                    <div className="w-full max-w-6xl mx-auto">
-                        <div className="flex items-center mb-6">
+        <>
+            <Navigation history={history} onHistoryUpdated={fetchData} />
+            <div className={`pt-16 pb-24 ${isOpen ? 'pl-64' : 'pl-16'} transition-all duration-300 ease-in-out`}>
+                <div className="px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
+                    <div className="mx-auto w-full md:w-[90%] lg:w-[85%] xl:w-[90%] 2xl:w-[95%]">
+                        <div className="my-6 flex items-center justify-between">
+                            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 truncate max-w-2xl">
+                                {analysis.fileInfo[0]?.filename || 'Analysis Result'}
+                            </h1>
                             <Link
                                 href="/"
-                                className="mr-4 text-primary dark:text-primary-light hover:text-primary-dark dark:hover:text-primary flex items-center"
+                                className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"
                             >
-                                <svg
-                                    className="w-5 h-5 mr-1"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                                    />
-                                </svg>
-                                Back to Home
+                                New Analysis
                             </Link>
-                            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Analysis Details</h1>
                         </div>
 
-                        <AnalysisResults analysis={{
-                            ...analysis,
-                            recommendations: analysis.recommendations || []
-                        }} />
+                        <div className="shadow-sm rounded-lg p-6 pb-8 dark:bg-[#1E1E1E] bg-gray-50">
+                            <AnalysisResults analysis={{
+                                ...analysis,
+                                recommendations: analysis.recommendations || []
+                            } as unknown as AnalysisData} />
+                        </div>
                     </div>
                 </div>
-            </main>
-        </div>
+            </div>
+        </>
     );
 }

@@ -1,21 +1,87 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import { useState } from 'react';
 import Link from 'next/link';
 import { AnalysisHistory } from '@/types/api';
 import { formatDate } from '@/utils/formatters';
 import { useSidebar } from '@/contexts/SidebarContext';
-import { Bars3Icon } from '@heroicons/react/24/outline';
+import { Bars3Icon, TrashIcon } from '@heroicons/react/24/outline';
+import toast from 'react-hot-toast';
+import ConfirmationModal from './ConfirmationModal';
 
 interface ChatGptStyleSidebarProps {
     history: AnalysisHistory[];
     isOpen: boolean;
     onClose: () => void;
+    onHistoryUpdated?: () => void;
 }
 
-export default function ChatGptStyleSidebar({ history, isOpen, onClose }: ChatGptStyleSidebarProps) {
+export default function ChatGptStyleSidebar({
+    history,
+    isOpen,
+    onClose,
+    onHistoryUpdated
+}: ChatGptStyleSidebarProps) {
     const pathname = usePathname();
     const { toggle } = useSidebar();
+    const [deleteConfirmation, setDeleteConfirmation] = useState<{
+        isOpen: boolean;
+        itemId: string | null;
+        itemName: string | null;
+    }>({
+        isOpen: false,
+        itemId: null,
+        itemName: null
+    });
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    const handleDeleteClick = (e: React.MouseEvent, item: AnalysisHistory) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setDeleteConfirmation({
+            isOpen: true,
+            itemId: item.id,
+            itemName: item.filename
+        });
+    };
+
+    const closeDeleteConfirmation = () => {
+        setDeleteConfirmation({
+            isOpen: false,
+            itemId: null,
+            itemName: null
+        });
+    };
+
+    const confirmDelete = async () => {
+        if (!deleteConfirmation.itemId) return;
+
+        try {
+            setIsDeleting(true);
+            const response = await fetch(`/api/history?id=${deleteConfirmation.itemId}`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to delete document');
+            }
+
+            // Show success toast
+            toast.success('Document deleted successfully');
+
+            // Refresh history if callback provided
+            if (onHistoryUpdated) {
+                onHistoryUpdated();
+            }
+        } catch (error) {
+            console.error('Error deleting document:', error);
+            toast.error('Failed to delete document');
+        } finally {
+            setIsDeleting(false);
+            closeDeleteConfirmation();
+        }
+    };
 
     return (
         <>
@@ -66,32 +132,64 @@ export default function ChatGptStyleSidebar({ history, isOpen, onClose }: ChatGp
                                 const isActive = pathname === `/analysis/${item.id}`;
 
                                 return (
-                                    <Link
+                                    <div
                                         key={item.id}
-                                        href={`/analysis/${item.id}`}
-                                        className={`
-                      block px-4 py-3 mx-2 my-1 rounded-md
-                      text-sm transition-colors duration-150
-                      ${isActive
-                                                ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white'
-                                                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/60'}
-                    `}
+                                        className="relative group"
                                     >
-                                        <div className="flex flex-col space-y-1">
-                                            <span className={`font-medium truncate ${isActive ? 'text-gray-900 dark:text-white' : ''}`}>
-                                                {item.filename}
-                                            </span>
-                                            <span className="text-xs text-gray-500 dark:text-gray-400">
-                                                {formatDate(item.createdAt)}
-                                            </span>
-                                        </div>
-                                    </Link>
+                                        <Link
+                                            href={`/analysis/${item.id}`}
+                                            className={`
+                                                block px-4 py-3 mx-2 my-1 rounded-md
+                                                text-sm transition-colors duration-150
+                                                ${isActive
+                                                    ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white'
+                                                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/60'}
+                                            `}
+                                        >
+                                            <div className="flex flex-col space-y-1 pr-7">
+                                                <span className={`font-medium truncate ${isActive ? 'text-gray-900 dark:text-white' : ''}`}>
+                                                    {item.filename}
+                                                </span>
+                                                <span className="text-xs text-gray-500 dark:text-gray-400">
+                                                    {formatDate(item.createdAt)}
+                                                </span>
+                                            </div>
+                                        </Link>
+
+                                        {/* Delete button - appears on hover or when active */}
+                                        <button
+                                            onClick={(e) => handleDeleteClick(e, item)}
+                                            className={`
+                                                absolute right-3 top-1/2 -translate-y-1/2
+                                                p-1.5 rounded-full
+                                                text-gray-400 hover:text-red-500 dark:text-gray-500 dark:hover:text-red-400
+                                                hover:bg-gray-100 dark:hover:bg-gray-700
+                                                transition-opacity duration-150
+                                                ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}
+                                            `}
+                                            aria-label={`Delete ${item.filename}`}
+                                        >
+                                            <TrashIcon className="h-4 w-4" />
+                                        </button>
+                                    </div>
                                 );
                             })}
                         </div>
                     )}
                 </div>
             </aside>
+
+            {/* Delete confirmation modal */}
+            <ConfirmationModal
+                isOpen={deleteConfirmation.isOpen}
+                title="Delete Document"
+                message={`Are you sure you want to delete "${deleteConfirmation.itemName}"? This action cannot be undone.`}
+                confirmText={isDeleting ? "Deleting..." : "Delete"}
+                cancelText="Cancel"
+                onConfirm={confirmDelete}
+                onCancel={closeDeleteConfirmation}
+                isDestructive
+            />
         </>
     );
-} 
+}
