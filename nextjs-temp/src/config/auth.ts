@@ -42,8 +42,12 @@ export const authOptions: AuthOptions = {
             }
             return token;
         },
-        async redirect({ baseUrl }) {
-            // Always redirect to home page after sign in, ignoring the callback URL
+        async redirect({ url, baseUrl }) {
+            // Allow internal URLs and the sign-in callback to proceed
+            if (url.startsWith(baseUrl) || url.includes('/api/auth/callback/')) {
+                return url;
+            }
+            // Default fallback to base URL
             return baseUrl;
         },
     },

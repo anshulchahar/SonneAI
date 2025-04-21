@@ -3,7 +3,7 @@ import deploymentConfig from './deployment.config.mjs';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    reactStrictMode: true,
+    reactStrictMode: process.env.NODE_ENV === 'production', // Only use strict mode in production
     swcMinify: true,
     images: {
         domains: ['lh3.googleusercontent.com'], // For Google auth profile images
@@ -13,6 +13,11 @@ const nextConfig = {
         GEMINI_API_KEY: process.env.GEMINI_API_KEY,
     },
     async headers() {
+        // Skip header processing in development for faster startup
+        if (process.env.NODE_ENV === 'development') {
+            return [];
+        }
+
         const headers = [
             {
                 source: '/:path*',
@@ -54,7 +59,7 @@ const nextConfig = {
         } else {
             headers[0].headers.push({
                 key: 'Content-Security-Policy',
-                value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://lh3.googleusercontent.com; font-src 'self'; object-src 'none'; connect-src 'self' https://api.emailjs.com",
+                value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://lh3.googleusercontent.com https://authjs.dev; font-src 'self'; object-src 'none'; connect-src 'self' https://api.emailjs.com",
             });
         }
 
