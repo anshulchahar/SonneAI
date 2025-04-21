@@ -35,7 +35,7 @@ export default async function middleware(req: NextRequest) {
     // Use the original request headers without modifying them
     // This should prevent duplicate CSP headers from being added
     const response = NextResponse.next();
-    
+
     // Only add x-forwarded-host for auth-related requests if it doesn't exist
     if (pathname.includes('/api/auth/callback/')) {
         const requestHeaders = new Headers(req.headers);
@@ -48,6 +48,6 @@ export default async function middleware(req: NextRequest) {
             });
         }
     }
-    
+
     return response;
 }
