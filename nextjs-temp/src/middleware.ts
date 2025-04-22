@@ -22,16 +22,6 @@ export default async function middleware(req: NextRequest) {
     // Get the pathname of the request
     const pathname = req.nextUrl.pathname;
 
-    // If someone tries to access the old signin page (which no longer exists),
-    // either redirect to home (if authenticated) or to the built-in NextAuth sign-in
-    if (pathname.startsWith('/auth/signin')) {
-        if (isAuthenticated) {
-            return NextResponse.redirect(new URL('/', req.url));
-        } else {
-            return NextResponse.redirect(new URL('/api/auth/signin', req.url));
-        }
-    }
-
     // Use the original request headers without modifying them
     // This should prevent duplicate CSP headers from being added
     const response = NextResponse.next();
