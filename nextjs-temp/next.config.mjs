@@ -54,7 +54,7 @@ const nextConfig = {
 
             headers[0].headers.push({
                 key: 'Content-Security-Policy',
-                value: `${cspValue}; connect-src 'self' https://api.emailjs.com`,
+                value: cspValue, // Don't add duplicate connect-src directive
             });
         } else {
             headers[0].headers.push({
