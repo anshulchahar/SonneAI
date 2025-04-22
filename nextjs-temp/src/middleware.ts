@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getToken } from "next-auth/jwt";
 
 export const config = {
     matcher: [
@@ -16,9 +15,6 @@ export const config = {
 };
 
 export default async function middleware(req: NextRequest) {
-    const token = await getToken({ req });
-    const isAuthenticated = !!token;
-
     // Get the pathname of the request
     const pathname = req.nextUrl.pathname;
 
