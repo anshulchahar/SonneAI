@@ -7,7 +7,7 @@ import { PrismaClient } from "@prisma/client";
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
 
 export const prisma = globalForPrisma.prisma || new PrismaClient({
-  log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+    log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
 });
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
@@ -59,34 +59,30 @@ export const authOptions: AuthOptions = {
         async redirect({ url, baseUrl }) {
             // Handle production domain explicitly
             const productionDomain = "https://sonneai.com";
-            
+
             // Check if on production domain
             if (process.env.NODE_ENV === 'production' && url.startsWith(productionDomain)) {
                 return url;
             }
-            
+
             // Allow OAuth callback URLs through
             if (url.includes('/api/auth/callback/')) {
                 return url;
             }
-            
+
             // Handle relative URLs
             if (url.startsWith('/')) {
                 return `${baseUrl}${url}`;
             }
-            
+
             // Allow internal URLs
             if (url.startsWith(baseUrl)) {
                 return url;
             }
-            
+
             // Default fallback to base URL
             return baseUrl;
         },
-    },
-    pages: {
-        signIn: '/auth/signin',
-        error: '/auth/error',
     },
     useSecureCookies: process.env.NODE_ENV === "production",
 };

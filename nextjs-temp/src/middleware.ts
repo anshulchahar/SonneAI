@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getToken } from "next-auth/jwt";
 
 export const config = {
     matcher: [
@@ -16,21 +15,8 @@ export const config = {
 };
 
 export default async function middleware(req: NextRequest) {
-    const token = await getToken({ req });
-    const isAuthenticated = !!token;
-
     // Get the pathname of the request
     const pathname = req.nextUrl.pathname;
-
-    // If someone tries to access the old signin page (which no longer exists),
-    // either redirect to home (if authenticated) or to the built-in NextAuth sign-in
-    if (pathname.startsWith('/auth/signin')) {
-        if (isAuthenticated) {
-            return NextResponse.redirect(new URL('/', req.url));
-        } else {
-            return NextResponse.redirect(new URL('/api/auth/signin', req.url));
-        }
-    }
 
     // Use the original request headers without modifying them
     // This should prevent duplicate CSP headers from being added
