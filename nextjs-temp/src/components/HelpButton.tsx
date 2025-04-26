@@ -2,10 +2,12 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { QuestionMarkCircleIcon } from '@heroicons/react/24/outline';
+import { motion } from 'framer-motion';
+import { QuestionMarkCircleIcon, ChatBubbleOvalLeftEllipsisIcon } from '@heroicons/react/24/outline';
 
 export default function HelpButton() {
     const [isOpen, setIsOpen] = useState(false);
+    const [isHovered, setIsHovered] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
     const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -32,16 +34,30 @@ export default function HelpButton() {
         setIsOpen(!isOpen);
     };
 
+    // Calculate button background based on state
+    const getButtonBgColor = () => {
+        if (isOpen) {
+            return 'bg-primary dark:bg-primary';
+        } else if (isHovered) {
+            return 'bg-primary-light dark:bg-primary-light';
+        } else {
+            return 'bg-primary dark:bg-primary';
+        }
+    };
+
     return (
-        <div className="fixed bottom-5 right-5 z-50">
-            <button
+        <div className="fixed bottom-4 right-4 z-50">
+            <motion.button
                 ref={buttonRef}
                 onClick={toggleMenu}
-                className={`flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-[#3A3A3A] dark:hover:bg-[#444444] border border-gray-200 dark:border-[#333333] shadow-md transition-all duration-200 ${isOpen ? 'ring-2 ring-primary dark:ring-primary' : ''}`}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+                whileHover={{ scale: 1.1 }}
+                className={`flex items-center justify-center w-14 h-14 rounded-full shadow-lg ${getButtonBgColor()} transition-colors duration-200`}
                 aria-label="Help"
             >
-                <QuestionMarkCircleIcon className="h-7 w-7 text-gray-600 dark:text-gray-300" />
-            </button>
+                <ChatBubbleOvalLeftEllipsisIcon className="h-6 w-6 text-white" />
+            </motion.button>
 
             {/* Dropdown menu with animation */}
             <div
