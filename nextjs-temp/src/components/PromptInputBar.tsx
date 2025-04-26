@@ -14,8 +14,9 @@ interface PromptInputBarProps {
     placeholder?: string;
     helperText?: string;
     errorMessage?: string;
-    outputLength?: number;
-    onOutputLengthChange?: (length: number) => void;
+    // Remove unused props or comment them if needed for future use
+    // outputLength?: number;
+    // onOutputLengthChange?: (length: number) => void;
 }
 
 export default function PromptInputBar({
@@ -27,21 +28,20 @@ export default function PromptInputBar({
     buttonText = 'Analyze',
     helperText = 'Press Enter to submit • Shift+Enter for new line',
     errorMessage = '',
-    outputLength = 1000,
-    onOutputLengthChange = () => { }
+    // Remove unused parameters or prefix with underscore
+    // outputLength = 1000,
+    // onOutputLengthChange = () => { }
 }: PromptInputBarProps) {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const [localError, setLocalError] = useState('');
     const { isOpen } = useSidebar(); // Get sidebar state to adjust position
     const [isMobile, setIsMobile] = useState(false);
-    const [screenWidth, setScreenWidth] = useState(0);
 
     // Check if we're on a mobile device and track screen width
     useEffect(() => {
         const checkScreenDimensions = () => {
             const width = window.innerWidth;
             setIsMobile(width < 768);
-            setScreenWidth(width);
         };
 
         // Initial check
