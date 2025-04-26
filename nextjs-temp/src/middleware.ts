@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getToken } from "next-auth/jwt";
 
 export const config = {
     matcher: [
@@ -16,29 +15,25 @@ export const config = {
 };
 
 export default async function middleware(req: NextRequest) {
-    const token = await getToken({ req });
-    const isAuthenticated = !!token;
-
     // Get the pathname of the request
     const pathname = req.nextUrl.pathname;
 
-    // If someone tries to access the old signin page (which no longer exists),
-    // either redirect to home (if authenticated) or to the built-in NextAuth sign-in
-    if (pathname.startsWith('/auth/signin')) {
-        if (isAuthenticated) {
-            return NextResponse.redirect(new URL('/', req.url));
-        } else {
-            return NextResponse.redirect(new URL('/api/auth/signin', req.url));
+    // Use the original request headers without modifying them
+    // This should prevent duplicate CSP headers from being added
+    const response = NextResponse.next();
+
+    // Only add x-forwarded-host for auth-related requests if it doesn't exist
+    if (pathname.includes('/api/auth/callback/')) {
+        const requestHeaders = new Headers(req.headers);
+        if (!requestHeaders.has("x-forwarded-host")) {
+            requestHeaders.set("x-forwarded-host", req.headers.get("host") || "localhost");
+            return NextResponse.next({
+                request: {
+                    headers: requestHeaders,
+                },
+            });
         }
     }
 
-    // Set x-forwarded-host header for OAuth callback
-    const requestHeaders = new Headers(req.headers);
-    requestHeaders.set("x-forwarded-host", req.headers.get("host") || "localhost");
-
-    return NextResponse.next({
-        request: {
-            headers: requestHeaders,
-        },
-    });
+    return response;
 }

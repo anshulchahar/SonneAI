@@ -33,7 +33,7 @@ Include the following information (as much as you can provide):
 
 ## Disclosure Policy
 
-- Security vulnerabilities will be disclosed after a fix has been released
+- Security vulnerabilities will be disclosed after fix has been released
 - We will coordinate with you to determine an appropriate disclosure date
 - We aim to patch confirmed vulnerabilities within 30 days
 - Public disclosure will include credit to the reporter unless anonymity is requested
