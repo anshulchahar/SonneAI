@@ -12,12 +12,9 @@ export default function HelpButton() {
     // Close menu when clicking outside
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
-            if (
-                menuRef.current &&
-                buttonRef.current &&
+            if (menuRef.current && buttonRef.current &&
                 !menuRef.current.contains(event.target as Node) &&
-                !buttonRef.current.contains(event.target as Node)
-            ) {
+                !buttonRef.current.contains(event.target as Node)) {
                 setIsOpen(false);
             }
         }
@@ -33,14 +30,14 @@ export default function HelpButton() {
     };
 
     return (
-        <div className="fixed bottom-5 right-5 z-50">
+        <div className="fixed bottom-5 md:bottom-5 right-5 z-40">
             <button
                 ref={buttonRef}
                 onClick={toggleMenu}
-                className={`flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-[#3A3A3A] dark:hover:bg-[#444444] border border-gray-200 dark:border-[#333333] shadow-md transition-all duration-200 ${isOpen ? 'ring-2 ring-primary dark:ring-primary' : ''}`}
+                className={`flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-[#3A3A3A] dark:hover:bg-[#444444] border border-gray-200 dark:border-[#333333] shadow-md transition-all duration-200 ${isOpen ? 'ring-2 ring-primary dark:ring-primary' : ''}`}
                 aria-label="Help"
             >
-                <QuestionMarkCircleIcon className="h-7 w-7 text-gray-600 dark:text-gray-300" />
+                <QuestionMarkCircleIcon className="h-6 w-6 sm:h-7 sm:w-7 text-gray-600 dark:text-gray-300" />
             </button>
 
             {/* Dropdown menu with animation */}
@@ -87,4 +84,4 @@ export default function HelpButton() {
             </div>
         </div>
     );
-} 
+}
