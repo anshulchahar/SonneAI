@@ -40,24 +40,28 @@ export default function OutputLengthSlider({
   };
 
   return (
-    <div className="flex flex-col items-center h-full">
-      <div className="relative h-64 flex flex-col items-center">
-        <span className="text-xs text-gray-500 dark:text-gray-400 mb-2">{lengthLabels[max]}</span>
-        <input
-          type="range"
-          min={min}
-          max={max}
-          step={step}
-          value={currentValue}
-          onChange={handleChange}
-          className="w-2 h-full bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-primary"
-          style={{
-            background: `linear-gradient(to bottom, var(--color-primary) 0%, var(--color-primary) ${percentage}%, var(--border) ${percentage}%, var(--border) 100%)`,
-            transform: 'rotate(0deg)',
-            WebkitAppearance: 'slider-vertical'
-          }}
-        />
-        <span className="text-xs text-gray-500 dark:text-gray-400 mt-2">{lengthLabels[min]}</span>
+    <div className="flex flex-col w-full">
+      <div className="relative w-full flex items-center mb-1">
+        {/* Brief label aligned with left edge of the capsule */}
+        <span className="text-xs text-gray-500 dark:text-gray-400 absolute left-0">{lengthLabels[min]}</span>
+
+        <div className="w-full" style={{ paddingLeft: "2rem", paddingRight: "3rem" }}>
+          <input
+            type="range"
+            min={min}
+            max={max}
+            step={step}
+            value={currentValue}
+            onChange={handleChange}
+            className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-primary"
+            style={{
+              background: `linear-gradient(to right, var(--color-primary) 0%, var(--color-primary) ${percentage}%, var(--border) ${percentage}%, var(--border) 100%)`
+            }}
+          />
+        </div>
+
+        {/* Detailed label aligned with right edge of the capsule */}
+        <span className="text-xs text-gray-500 dark:text-gray-400 absolute right-0">{lengthLabels[max]}</span>
       </div>
     </div>
   );

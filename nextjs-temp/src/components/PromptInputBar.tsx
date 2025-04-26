@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect, KeyboardEvent, ChangeEvent } from 'react';
 import ErrorMessage from './ErrorMessage';
 import { useSidebar } from '@/contexts/SidebarContext';
-import OutputLengthSlider from './OutputLengthSlider';
 
 interface PromptInputBarProps {
     customPrompt: string;
@@ -129,8 +128,8 @@ export default function PromptInputBar({
             `}
             style={getPromptBarStyle()}
         >
-            <div className="max-w-3xl mx-auto flex items-center gap-4">
-                <div className="flex-1">
+            <div className="mx-auto max-w-3xl w-full md:w-[90%] lg:w-[85%] xl:w-[90%] 2xl:w-[95%] flex flex-col items-center">
+                <div className="w-full">
                     <div className={`relative flex items-center shadow-md border ${displayError ? 'border-red-300 dark:border-red-700' : 'border-gray-200 dark:border-gray-700'} bg-white dark:bg-[#2C2C2C] rounded-full px-3 py-1.5 sm:px-4`}>
                         <textarea
                             ref={textareaRef}
@@ -185,17 +184,6 @@ export default function PromptInputBar({
                             {helperText}
                         </div>
                     )}
-                </div>
-
-                {/* Output Length Slider - Always visible on the right */}
-                <div className="hidden sm:block fixed right-5 top-[25%]">
-                    <OutputLengthSlider
-                        value={outputLength}
-                        onChange={onOutputLengthChange}
-                        min={100}
-                        max={1000}
-                        step={50}
-                    />
                 </div>
             </div>
         </div>

@@ -9,6 +9,7 @@ import ErrorMessage from '@/components/ErrorMessage';
 import ProgressBar from '@/components/ProgressBar';
 import Navigation from '@/components/Navigation';
 import PromptInputBar from '@/components/PromptInputBar';
+import OutputLengthSlider from '@/components/OutputLengthSlider';
 import { AnalysisResult, AnalysisHistory } from '@/types/api';
 import { AnalysisData } from '@/types/analysis';
 import { useSidebar } from '@/contexts/SidebarContext';
@@ -270,7 +271,18 @@ export default function Home() {
                       </div>
                     )}
 
-                    <div className="mt-6">
+                    {/* Output Length Slider between document input and analyze button */}
+                    <div className="mt-6 mb-6">
+                      <OutputLengthSlider
+                        value={outputLength}
+                        onChange={handleOutputLengthChange}
+                        min={100}
+                        max={1000}
+                        step={50}
+                      />
+                    </div>
+
+                    <div className="mt-4">
                       <ErrorMessage message={analyzeError || ''} className="mb-3" />
 
                       <div className="flex justify-center">
