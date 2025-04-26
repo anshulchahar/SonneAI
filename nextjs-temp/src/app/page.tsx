@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSession } from 'next-auth/react';
 import FileUpload from '@/components/FileUpload';
 import AnalysisResults from '@/components/AnalysisResults';
@@ -9,10 +9,10 @@ import ErrorMessage from '@/components/ErrorMessage';
 import ProgressBar from '@/components/ProgressBar';
 import Navigation from '@/components/Navigation';
 import PromptInputBar from '@/components/PromptInputBar';
-import OutputLengthSlider from '@/components/OutputLengthSlider';
 import { AnalysisResult, AnalysisHistory } from '@/types/api';
 import { AnalysisData } from '@/types/analysis';
 import { useSidebar } from '@/contexts/SidebarContext';
+import OutputLengthSlider from '@/components/OutputLengthSlider';
 
 // Define a type for the debug info
 interface DebugInfo {
@@ -35,6 +35,35 @@ export default function Home() {
   const [history, setHistory] = useState<AnalysisHistory[]>([]);
   const { data: session } = useSession();
   const { isOpen } = useSidebar();
+
+  // References for measuring button dimensions
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [buttonDimensions, setButtonDimensions] = useState({ width: 0, left: 0 });
+
+  // Effect to measure the button dimensions
+  useEffect(() => {
+    const updateButtonMeasurements = () => {
+      if (buttonRef.current) {
+        const buttonRect = buttonRef.current.getBoundingClientRect();
+        const parentRect = buttonRef.current.parentElement?.getBoundingClientRect() || { left: 0 };
+
+        // Calculate relative position within parent
+        const relativeLeft = buttonRect.left - parentRect.left;
+
+        setButtonDimensions({
+          width: buttonRect.width,
+          left: relativeLeft
+        });
+      }
+    };
+
+    // Set initial measurements
+    updateButtonMeasurements();
+
+    // Update measurements on window resize
+    window.addEventListener('resize', updateButtonMeasurements);
+    return () => window.removeEventListener('resize', updateButtonMeasurements);
+  }, [files.length]); // Re-measure when files array changes, as it might affect button text
 
   useEffect(() => {
     // Fetch user's history when logged in
@@ -271,22 +300,31 @@ export default function Home() {
                       </div>
                     )}
 
-                    {/* Output Length Slider between document input and analyze button */}
-                    <div className="mt-6 mb-6">
-                      <OutputLengthSlider
-                        value={outputLength}
-                        onChange={handleOutputLengthChange}
-                        min={100}
-                        max={1000}
-                        step={50}
-                      />
+                    {/* Output Length Slider positioned above Analyze Document button */}
+                    <div className="mt-6 mb-4 flex justify-center relative">
+                      <div
+                        className="w-full"
+                        style={{
+                          width: buttonDimensions.width > 0 ? `${buttonDimensions.width}px` : 'auto',
+                          transition: 'width 0.2s ease'
+                        }}
+                      >
+                        <OutputLengthSlider
+                          value={outputLength}
+                          onChange={handleOutputLengthChange}
+                          min={100}
+                          max={1000}
+                          step={50}
+                        />
+                      </div>
                     </div>
 
-                    <div className="mt-4">
+                    <div className="mt-2">
                       <ErrorMessage message={analyzeError || ''} className="mb-3" />
 
                       <div className="flex justify-center">
                         <button
+                          ref={buttonRef}
                           onClick={handleAnalyze}
                           disabled={isAnalyzing}
                           className={`px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200 ${isAnalyzing ? 'opacity-50 cursor-not-allowed' : ''
