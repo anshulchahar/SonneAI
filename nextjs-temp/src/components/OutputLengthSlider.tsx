@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface OutputLengthSliderProps {
   value: number;
@@ -18,11 +18,30 @@ export default function OutputLengthSlider({
   step = 100
 }: OutputLengthSliderProps) {
   const [currentValue, setCurrentValue] = useState(value);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Update local state when prop changes
   useEffect(() => {
     setCurrentValue(value);
   }, [value]);
+
+  // Check screen size and adjust layout
+  useEffect(() => {
+    const checkScreenSize = () => {
+      // For tablets and phones (screen width less than 768px)
+      setIsSmallScreen(window.innerWidth < 768);
+    };
+
+    // Check on initial load
+    checkScreenSize();
+
+    // Add listener for window resize
+    window.addEventListener('resize', checkScreenSize);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = parseInt(e.target.value, 10);
@@ -34,33 +53,60 @@ export default function OutputLengthSlider({
   const percentage = ((currentValue - min) / (max - min)) * 100;
 
   return (
-    <div className="relative w-full">
-      {/* Container for both labels and slider */}
-      <div className="relative h-8 flex items-center">
-        {/* Left "Brief" label */}
-        <div className="absolute left-0 text-xs text-gray-500 dark:text-gray-400 translate-y-0 transform -translate-x-12 flex items-center">
-          <span className="inline-block">B</span>rief
-        </div>
+    <div className="relative w-full" ref={containerRef}>
+      {isSmallScreen ? (
+        // Small screen layout (labels above)
+        <div className="flex flex-col">
+          {/* Labels above slider */}
+          <div className="flex justify-between mb-2 px-1">
+            <span className="text-xs text-gray-500 dark:text-gray-400">Brief</span>
+            <span className="text-xs text-gray-500 dark:text-gray-400">Detailed</span>
+          </div>
 
-        {/* Slider track and thumb */}
-        <input
-          type="range"
-          min={min}
-          max={max}
-          step={step}
-          value={currentValue}
-          onChange={handleChange}
-          className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-primary"
-          style={{
-            background: `linear-gradient(to right, var(--color-primary) 0%, var(--color-primary) ${percentage}%, var(--border) ${percentage}%, var(--border) 100%)`,
-          }}
-        />
-
-        {/* Right "Detailed" label */}
-        <div className="absolute right-0 text-xs text-gray-500 dark:text-gray-400 translate-y-0 transform translate-x-14 flex items-center">
-          Detaile<span className="inline-block">d</span>
+          {/* Slider */}
+          <div className="h-8 flex items-center">
+            <input
+              type="range"
+              min={min}
+              max={max}
+              step={step}
+              value={currentValue}
+              onChange={handleChange}
+              className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-primary"
+              style={{
+                background: `linear-gradient(to right, var(--color-primary) 0%, var(--color-primary) ${percentage}%, var(--border) ${percentage}%, var(--border) 100%)`,
+              }}
+            />
+          </div>
         </div>
-      </div>
+      ) : (
+        // Original layout for laptop and larger (labels on sides)
+        <div className="relative h-8 flex items-center">
+          {/* Left "Brief" label */}
+          <div className="absolute left-0 text-xs text-gray-500 dark:text-gray-400 translate-y-0 transform -translate-x-12 flex items-center">
+            <span className="inline-block">B</span>rief
+          </div>
+
+          {/* Slider track and thumb */}
+          <input
+            type="range"
+            min={min}
+            max={max}
+            step={step}
+            value={currentValue}
+            onChange={handleChange}
+            className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-primary"
+            style={{
+              background: `linear-gradient(to right, var(--color-primary) 0%, var(--color-primary) ${percentage}%, var(--border) ${percentage}%, var(--border) 100%)`,
+            }}
+          />
+
+          {/* Right "Detailed" label */}
+          <div className="absolute right-0 text-xs text-gray-500 dark:text-gray-400 translate-y-0 transform translate-x-14 flex items-center">
+            Detaile<span className="inline-block">d</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
