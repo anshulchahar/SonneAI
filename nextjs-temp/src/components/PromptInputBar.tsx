@@ -14,9 +14,8 @@ interface PromptInputBarProps {
     placeholder?: string;
     helperText?: string;
     errorMessage?: string;
-    // Remove unused props or comment them if needed for future use
-    // outputLength?: number;
-    // onOutputLengthChange?: (length: number) => void;
+    outputLength?: number;
+    onOutputLengthChange?: (length: number) => void;
 }
 
 export default function PromptInputBar({
@@ -28,9 +27,8 @@ export default function PromptInputBar({
     buttonText = 'Analyze',
     helperText = 'Press Enter to submit • Shift+Enter for new line',
     errorMessage = '',
-    // Remove unused parameters or prefix with underscore
-    // outputLength = 1000,
-    // onOutputLengthChange = () => { }
+    outputLength = 1000,
+    onOutputLengthChange = () => { }
 }: PromptInputBarProps) {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const [localError, setLocalError] = useState('');
