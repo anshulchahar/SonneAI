@@ -15,7 +15,6 @@ interface PromptInputBarProps {
     helperText?: string;
     errorMessage?: string;
     outputLength?: number;
-    onOutputLengthChange?: (length: number) => void;
 }
 
 export default function PromptInputBar({
@@ -28,22 +27,11 @@ export default function PromptInputBar({
     helperText = 'Press Enter to submit • Shift+Enter for new line',
     errorMessage = '',
     outputLength = 1000,
-    onOutputLengthChange = () => { }
 }: PromptInputBarProps) {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const [localError, setLocalError] = useState('');
     const { isOpen } = useSidebar(); // Get sidebar state to adjust position
     const [isMobile, setIsMobile] = useState(false);
-
-    // Use these props in a useEffect to satisfy ESLint
-    useEffect(() => {
-        // This is a placeholder use of the outputLength prop
-        // You can implement actual functionality if needed
-        if (outputLength !== 1000) {
-            // Do something with outputLength if it's not the default value
-            console.log(`Output length set to: ${outputLength}`);
-        }
-    }, [outputLength]);
 
     // Check if we're on a mobile device and track screen width
     useEffect(() => {
