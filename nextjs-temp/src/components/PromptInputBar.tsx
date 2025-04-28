@@ -14,7 +14,6 @@ interface PromptInputBarProps {
     placeholder?: string;
     helperText?: string;
     errorMessage?: string;
-    outputLength?: number;
 }
 
 export default function PromptInputBar({
@@ -26,7 +25,6 @@ export default function PromptInputBar({
     buttonText = 'Analyze',
     helperText = 'Press Enter to submit • Shift+Enter for new line',
     errorMessage = '',
-    outputLength = 1000,
 }: PromptInputBarProps) {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const [localError, setLocalError] = useState('');
