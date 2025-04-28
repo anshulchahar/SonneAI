@@ -23,6 +23,7 @@ export default function PromptInputBar({
     canAnalyze,
     isAnalyzing,
     buttonText = 'Analyze',
+    placeholder,
     helperText = 'Press Enter to submit • Shift+Enter for new line',
     errorMessage = '',
 }: PromptInputBarProps) {
@@ -147,6 +148,7 @@ export default function PromptInputBar({
                             onChange={handlePromptChange}
                             onKeyDown={handleKeyDown}
                             disabled={isAnalyzing}
+                            placeholder={placeholder}
                             className={`flex-1 px-1 sm:px-2 py-1 text-sm sm:text-base resize-none overflow-hidden focus:outline-none bg-transparent text-gray-900 dark:text-white ${displayError ? 'focus:ring-red-500' : ''}`}
                             style={{ maxHeight: '100px', minHeight: '28px' }}
                             rows={1}

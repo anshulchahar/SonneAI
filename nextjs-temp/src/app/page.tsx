@@ -377,13 +377,11 @@ export default function Home() {
           onCustomPromptChange={handleCustomPromptChange}
           onAnalyze={handleSendPrompt}
           canAnalyze={true} // Always allow sending a prompt
-          isAnalyzing={isAnalyzing}
+          isAnalyzing={false}
           buttonText="Send"
           placeholder="Add specific instructions for analyzing your document (optional)..."
           helperText="Use this to add custom instructions for your analysis"
           errorMessage={promptError || ''}
-          outputLength={outputLength}
-          onOutputLengthChange={handleOutputLengthChange}
         />
       )}
     </div>
