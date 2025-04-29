@@ -1,12 +1,12 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { AnalysisHistory } from '@/types/api';
 import { formatDate } from '@/utils/formatters';
 import { useSidebar } from '@/contexts/SidebarContext';
-import { TrashIcon, DocumentTextIcon, BookOpenIcon, ChevronLeftIcon } from '@heroicons/react/24/outline';
+import { TrashIcon, DocumentTextIcon, ChevronLeftIcon, BookOpenIcon } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
 import ConfirmationModal from './ConfirmationModal';
 
@@ -35,16 +35,6 @@ export default function ChatGptStyleSidebar({
         itemName: null
     });
     const [isDeleting, setIsDeleting] = useState(false);
-    const [hasAnimated, setHasAnimated] = useState(false);
-
-    // Initial attention-grabbing animation effect
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setHasAnimated(true);
-        }, 1500);
-
-        return () => clearTimeout(timer);
-    }, []);
 
     const handleDeleteClick = (e: React.MouseEvent, item: AnalysisHistory) => {
         e.preventDefault();
