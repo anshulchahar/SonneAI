@@ -17,7 +17,7 @@ export default function HelpPage() {
         },
         {
             question: 'What file formats are supported?',
-            answer: 'Currently, we support PDF documents. We&apos;re working on expanding to other formats like DOCX, TXT, and more in the future.'
+            answer: 'Currently, we support PDF documents. We\'re working on expanding to other formats like DOCX, TXT, and more in the future.'
         },
         {
             question: 'How secure is my data?',
@@ -25,7 +25,7 @@ export default function HelpPage() {
         },
         {
             question: 'Can I save my analysis results?',
-            answer: 'Yes! When you&apos;re signed in, all your document analyses are automatically saved to your history, and you can access them anytime.'
+            answer: 'Yes! When you\'re signed in, all your document analyses are automatically saved to your history, and you can access them anytime.'
         },
         {
             question: 'Is there a limit to how many documents I can analyze?',
@@ -107,4 +107,4 @@ export default function HelpPage() {
             </div>
         </div>
     );
-} 
+}
