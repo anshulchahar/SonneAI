@@ -191,13 +191,13 @@ export default function FileUpload({
     };
 
     return (
-        <div className="space-y-6">
+        <div className="w-full max-w-full space-y-4 sm:space-y-6">
             <div
                 onClick={() => fileInputRef.current?.click()}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
-                className={`border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors ${error ? 'border-red-300 dark:border-red-800 bg-red-50 dark:bg-red-900/10' :
+                className={`border-2 border-dashed rounded-lg p-6 sm:p-12 text-center cursor-pointer transition-colors ${error ? 'border-red-300 dark:border-red-800 bg-red-50 dark:bg-red-900/10' :
                     isDragging
                         ? 'border-gold-500'
                         : disabled
@@ -215,7 +215,7 @@ export default function FileUpload({
                     disabled={disabled}
                 />
                 <svg
-                    className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-300"
+                    className="mx-auto h-8 w-8 sm:h-12 sm:w-12 text-gray-400 dark:text-gray-300"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -252,14 +252,14 @@ export default function FileUpload({
                     <h4 className="text-sm font-medium text-gray-700 dark:text-gray-200">Selected Files</h4>
                     <ul className="divide-y divide-gray-200 dark:divide-gray-700 border border-gray-200 dark:border-gray-700 rounded-md overflow-hidden">
                         {files.map((file, index) => (
-                            <li key={index} className="px-4 py-3 flex items-center justify-between bg-white dark:bg-[#2C2C2C]">
+                            <li key={index} className="px-3 py-3 sm:px-4 sm:py-3 flex items-center justify-between bg-white dark:bg-[#2C2C2C]">
                                 <div className="flex items-center">
                                     {getFileIcon(file)}
-                                    <div className="ml-3">
-                                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate max-w-xs">
+                                    <div className="ml-3 max-w-[calc(100%_-_3rem)]">
+                                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate max-w-[150px] sm:max-w-xs md:max-w-sm">
                                             {file.name}
                                         </p>
-                                        <div className="flex items-center space-x-2">
+                                        <div className="flex items-center flex-wrap space-x-2">
                                             <p className="text-xs text-gray-500 dark:text-gray-400">{formatFileSize(file.size)}</p>
                                             <span className="inline-flex items-center rounded-full bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 text-xs font-medium text-blue-700 dark:text-blue-300">
                                                 {getFileTypeName(file)}
@@ -273,7 +273,7 @@ export default function FileUpload({
                                             e.stopPropagation();
                                             onFileRemoved(index);
                                         }}
-                                        className="text-gray-400 hover:text-red-500 dark:text-gray-500 dark:hover:text-red-400 focus:outline-none"
+                                        className="text-gray-400 hover:text-red-500 dark:text-gray-500 dark:hover:text-red-400 focus:outline-none ml-2 sm:ml-0"
                                     >
                                         <svg
                                             className="h-5 w-5"

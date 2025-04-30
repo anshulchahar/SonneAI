@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSession } from 'next-auth/react';
 import FileUpload from '@/components/FileUpload';
 import AnalysisResults from '@/components/AnalysisResults';
@@ -10,24 +10,60 @@ import ProgressBar from '@/components/ProgressBar';
 import Navigation from '@/components/Navigation';
 import PromptInputBar from '@/components/PromptInputBar';
 import { AnalysisResult, AnalysisHistory } from '@/types/api';
+import { AnalysisData } from '@/types/analysis';
 import { useSidebar } from '@/contexts/SidebarContext';
+import OutputLengthSlider from '@/components/OutputLengthSlider';
+
+// Define a type for the debug info
+interface DebugInfo {
+  [key: string]: string | number | boolean | null | DebugInfo | Array<string | number | boolean | DebugInfo>;
+}
 
 export default function Home() {
-  const { data: session } = useSession();
   const [files, setFiles] = useState<File[]>([]);
-  const [customPrompt, setCustomPrompt] = useState('');
-  const [savedPrompt, setSavedPrompt] = useState('');
+  const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [analyzeError, setAnalyzeError] = useState<string | null>(null);
   const [promptError, setPromptError] = useState<string | null>(null);
-  const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
-  const [debugInfo, setDebugInfo] = useState<string | null>(null);
-  const [history, setHistory] = useState<AnalysisHistory[]>([]);
-  const [customPromptUsed, setCustomPromptUsed] = useState(false);
+  const [debugInfo, setDebugInfo] = useState<DebugInfo | null>(null);
+  const [progress, setProgress] = useState<number>(0);
+  const [customPrompt, setCustomPrompt] = useState<string>('');
+  const [savedPrompt, setSavedPrompt] = useState<string>('');
+  const [customPromptUsed, setCustomPromptUsed] = useState<boolean>(false);
   const [outputLength, setOutputLength] = useState(500); // Default output length
+  const [history, setHistory] = useState<AnalysisHistory[]>([]);
+  const { data: session } = useSession();
   const { isOpen } = useSidebar();
+
+  // References for measuring button dimensions
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [buttonDimensions, setButtonDimensions] = useState({ width: 0, left: 0 });
+
+  // Effect to measure the button dimensions
+  useEffect(() => {
+    const updateButtonMeasurements = () => {
+      if (buttonRef.current) {
+        const buttonRect = buttonRef.current.getBoundingClientRect();
+        const parentRect = buttonRef.current.parentElement?.getBoundingClientRect() || { left: 0 };
+
+        // Calculate relative position within parent
+        const relativeLeft = buttonRect.left - parentRect.left;
+
+        setButtonDimensions({
+          width: buttonRect.width,
+          left: relativeLeft
+        });
+      }
+    };
+
+    // Set initial measurements
+    updateButtonMeasurements();
+
+    // Update measurements on window resize
+    window.addEventListener('resize', updateButtonMeasurements);
+    return () => window.removeEventListener('resize', updateButtonMeasurements);
+  }, [files.length]); // Re-measure when files array changes, as it might affect button text
 
   useEffect(() => {
     // Fetch user's history when logged in
@@ -192,6 +228,7 @@ export default function Home() {
     <div className="min-h-screen bg-gray-50 dark:bg-[#1E1E1E] transition-colors duration-200">
       <Navigation
         history={history}
+        onHistoryUpdated={fetchHistory}
       />
 
       <div className={`pt-16 pb-24 w-full transition-all duration-300 ease-in-out ${isOpen ? 'pl-64' : 'pl-16'}`}>
@@ -226,7 +263,9 @@ export default function Home() {
                           <div className="mt-2 p-3 bg-gray-100 dark:bg-gray-700 text-xs font-mono text-gray-700 dark:text-gray-200 rounded overflow-auto max-h-40">
                             <details>
                               <summary className="cursor-pointer text-gray-800 dark:text-gray-100">Debug Info</summary>
-                              <div className="text-gray-700 dark:text-gray-200">{debugInfo}</div>
+                              <div className="text-gray-700 dark:text-gray-200">
+                                {typeof debugInfo === 'object' ? JSON.stringify(debugInfo, null, 2) : String(debugInfo)}
+                              </div>
                             </details>
                           </div>
                         )}
@@ -261,11 +300,31 @@ export default function Home() {
                       </div>
                     )}
 
-                    <div className="mt-6">
+                    {/* Output Length Slider positioned above Analyze Document button */}
+                    <div className="mt-6 mb-4 flex justify-center relative">
+                      <div
+                        className="w-full"
+                        style={{
+                          width: buttonDimensions.width > 0 ? `${buttonDimensions.width}px` : 'auto',
+                          transition: 'width 0.2s ease'
+                        }}
+                      >
+                        <OutputLengthSlider
+                          value={outputLength}
+                          onChange={handleOutputLengthChange}
+                          min={100}
+                          max={1000}
+                          step={50}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="mt-2">
                       <ErrorMessage message={analyzeError || ''} className="mb-3" />
 
                       <div className="flex justify-center">
                         <button
+                          ref={buttonRef}
                           onClick={handleAnalyze}
                           disabled={isAnalyzing}
                           className={`px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200 ${isAnalyzing ? 'opacity-50 cursor-not-allowed' : ''
@@ -305,7 +364,7 @@ export default function Home() {
                 <AnalysisResults analysis={{
                   ...analysisResult,
                   recommendations: analysisResult.recommendations || []
-                }} />
+                } as unknown as AnalysisData} />
               </div>
             )}
           </div>
@@ -318,13 +377,11 @@ export default function Home() {
           onCustomPromptChange={handleCustomPromptChange}
           onAnalyze={handleSendPrompt}
           canAnalyze={true} // Always allow sending a prompt
-          isAnalyzing={isAnalyzing}
+          isAnalyzing={false}
           buttonText="Send"
           placeholder="Add specific instructions for analyzing your document (optional)..."
           helperText="Use this to add custom instructions for your analysis"
           errorMessage={promptError || ''}
-          outputLength={outputLength}
-          onOutputLengthChange={handleOutputLengthChange}
         />
       )}
     </div>

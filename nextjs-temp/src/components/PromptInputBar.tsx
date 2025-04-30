@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect, KeyboardEvent, ChangeEvent } from 'react';
 import ErrorMessage from './ErrorMessage';
 import { useSidebar } from '@/contexts/SidebarContext';
-import OutputLengthSlider from './OutputLengthSlider';
 
 interface PromptInputBarProps {
     customPrompt: string;
@@ -15,8 +14,6 @@ interface PromptInputBarProps {
     placeholder?: string;
     helperText?: string;
     errorMessage?: string;
-    outputLength?: number;
-    onOutputLengthChange?: (length: number) => void;
 }
 
 export default function PromptInputBar({
@@ -26,30 +23,30 @@ export default function PromptInputBar({
     canAnalyze,
     isAnalyzing,
     buttonText = 'Analyze',
+    placeholder,
     helperText = 'Press Enter to submit • Shift+Enter for new line',
     errorMessage = '',
-    outputLength = 1000,
-    onOutputLengthChange = () => { }
 }: PromptInputBarProps) {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const [localError, setLocalError] = useState('');
     const { isOpen } = useSidebar(); // Get sidebar state to adjust position
     const [isMobile, setIsMobile] = useState(false);
 
-    // Check if we're on a mobile device
+    // Check if we're on a mobile device and track screen width
     useEffect(() => {
-        const checkIfMobile = () => {
-            setIsMobile(window.innerWidth < 768);
+        const checkScreenDimensions = () => {
+            const width = window.innerWidth;
+            setIsMobile(width < 768);
         };
 
         // Initial check
-        checkIfMobile();
+        checkScreenDimensions();
 
         // Listen for window resize
-        window.addEventListener('resize', checkIfMobile);
+        window.addEventListener('resize', checkScreenDimensions);
 
         // Cleanup
-        return () => window.removeEventListener('resize', checkIfMobile);
+        return () => window.removeEventListener('resize', checkScreenDimensions);
     }, []);
 
     // Auto-resize the textarea as content grows
@@ -101,44 +98,58 @@ export default function PromptInputBar({
 
     // Calculate the centering style based on sidebar state and screen size
     const getPromptBarStyle = () => {
-        // On mobile, don't adjust positioning
+        // On mobile, center the component properly with normalized spacing
         if (isMobile) {
-            return {};
+            return {
+                width: '100%',
+                left: '0',
+                paddingLeft: '1rem',
+                paddingRight: '1rem',
+                maxWidth: '100%'
+            };
         }
+
         // On desktop/tablet with sidebar open, adjust to center in remaining space
         if (isOpen) {
             return {
                 width: 'calc(100% - 256px)', // Sidebar width is 256px (w-64)
                 left: '256px',
+                paddingLeft: '1rem',
+                paddingRight: '1rem'
             };
         }
+
         // Default position when sidebar is closed
         return {
             width: '100%',
             left: '0',
+            paddingLeft: '1rem',
+            paddingRight: '1rem'
         };
     };
 
     return (
         <div
             className={`
-                fixed bottom-0 z-10 pb-4 px-4 sm:px-6 lg:px-8 
+                fixed bottom-0 z-10 pb-4
                 bg-gradient-to-t from-gray-50 via-gray-50 to-transparent 
                 dark:from-[#1E1E1E] dark:via-[#1E1E1E] dark:to-transparent 
                 transition-all duration-300 ease-in-out
+                w-full
             `}
             style={getPromptBarStyle()}
         >
-            <div className="max-w-3xl mx-auto flex items-center gap-4">
-                <div className="flex-1">
-                    <div className={`relative flex items-center shadow-md border ${displayError ? 'border-red-300 dark:border-red-700' : 'border-gray-200 dark:border-gray-700'} bg-white dark:bg-[#2C2C2C] rounded-full px-3 py-1.5 sm:px-4`}>
+            <div className="mx-auto w-full sm:w-[95%] md:w-[90%] lg:w-[85%] xl:w-[80%] 2xl:w-[75%] flex flex-col items-center">
+                <div className="w-full">
+                    <div className={`relative flex items-center shadow-md border ${displayError ? 'border-red-300 dark:border-red-700' : 'border-gray-200 dark:border-gray-700'} bg-white dark:bg-[#2C2C2C] rounded-full px-2 py-1.5 sm:px-4`}>
                         <textarea
                             ref={textareaRef}
                             value={customPrompt}
                             onChange={handlePromptChange}
                             onKeyDown={handleKeyDown}
                             disabled={isAnalyzing}
-                            className={`flex-1 px-2 py-1 text-base resize-none overflow-hidden focus:outline-none bg-transparent text-gray-900 dark:text-white ${displayError ? 'focus:ring-red-500' : ''}`}
+                            placeholder={placeholder}
+                            className={`flex-1 px-1 sm:px-2 py-1 text-sm sm:text-base resize-none overflow-hidden focus:outline-none bg-transparent text-gray-900 dark:text-white ${displayError ? 'focus:ring-red-500' : ''}`}
                             style={{ maxHeight: '100px', minHeight: '28px' }}
                             rows={1}
                             aria-label="Type a message"
@@ -161,7 +172,7 @@ export default function PromptInputBar({
                             disabled={isAnalyzing}
                             title={canAnalyze ? `Press Enter to ${buttonText.toLowerCase()}` : "Upload a document first"}
                             aria-label={buttonText}
-                            className={`p-1 rounded-full flex items-center justify-center text-white transition-colors min-w-8 min-h-8 ${!isAnalyzing
+                            className={`p-1 rounded-full flex items-center justify-center text-white transition-colors min-w-7 min-h-7 sm:min-w-8 sm:min-h-8 ${!isAnalyzing
                                 ? 'bg-primary hover:bg-primary-dark focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-gray-800'
                                 : 'bg-gray-400 dark:bg-gray-600 cursor-not-allowed'
                                 }`}
@@ -178,24 +189,13 @@ export default function PromptInputBar({
                         </button>
                     </div>
 
-                    <ErrorMessage message={displayError} className="ml-1 mt-1" />
+                    <ErrorMessage message={displayError} className="ml-1 mt-1 text-sm" />
 
                     {!displayError && canAnalyze && !isAnalyzing && (
                         <div className="text-center mt-2 text-xs text-gray-500 dark:text-gray-400">
                             {helperText}
                         </div>
                     )}
-                </div>
-
-                {/* Output Length Slider - Always visible on the right */}
-                <div className="hidden sm:block fixed right-5 top-[25%]">
-                    <OutputLengthSlider
-                        value={outputLength}
-                        onChange={onOutputLengthChange}
-                        min={100}
-                        max={1000}
-                        step={50}
-                    />
                 </div>
             </div>
         </div>
