@@ -44,13 +44,8 @@ export default function Home() {
     const updateButtonMeasurements = () => {
       if (buttonRef.current) {
         const buttonRect = buttonRef.current.getBoundingClientRect();
-        const parentRect = buttonRef.current.parentElement?.getBoundingClientRect() || { left: 0 };
-
-        // Calculate relative position within parent
-        const relativeLeft = buttonRect.left - parentRect.left;
-
-        // We don't need to store these measurements anymore
-        // they were previously used but are no longer needed
+        // We're not using these measurements anymore, so we can remove the calculations
+        // that lead to unused variables
       }
     };
 
