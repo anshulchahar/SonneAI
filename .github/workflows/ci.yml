@@ -110,6 +110,10 @@ jobs:
     name: Build Next.js App
     runs-on: ubuntu-latest
     needs: [lint, test]
+    env:
+      DB_NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.DB_NEXT_PUBLIC_SUPABASE_URL }}
+      DB_NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.DB_NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+      DB_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.DB_SUPABASE_SERVICE_ROLE_KEY }}
     steps:
       - uses: actions/checkout@v4
       
