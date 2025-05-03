@@ -38,7 +38,6 @@ export default function Home() {
 
   // References for measuring button dimensions
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const [buttonDimensions, setButtonDimensions] = useState({ width: 0, left: 0 });
 
   // Effect to measure the button dimensions
   useEffect(() => {
@@ -50,10 +49,8 @@ export default function Home() {
         // Calculate relative position within parent
         const relativeLeft = buttonRect.left - parentRect.left;
 
-        setButtonDimensions({
-          width: buttonRect.width,
-          left: relativeLeft
-        });
+        // We don't need to store these measurements anymore
+        // they were previously used but are no longer needed
       }
     };
 
