@@ -123,10 +123,6 @@ jobs:
         working-directory: ./nextjs-temp
         run: npm install
         
-      - name: Setup Prisma
-        working-directory: ./nextjs-temp
-        run: npx prisma generate
-        
       - name: Build Next.js app
         working-directory: ./nextjs-temp
         run: npm run build
