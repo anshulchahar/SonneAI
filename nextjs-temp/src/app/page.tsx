@@ -255,6 +255,17 @@ export default function Home() {
                       disabled={isAnalyzing}
                     />
 
+                    {/* Output Length Slider positioned directly after FileUpload */}
+                    <div className="mt-4 mb-4 w-full">
+                      <OutputLengthSlider
+                        value={outputLength}
+                        onChange={handleOutputLengthChange}
+                        min={100}
+                        max={1000}
+                        step={50}
+                      />
+                    </div>
+
                     {error && (
                       <div className="mt-4">
                         <ErrorMessage message={error} />
@@ -300,26 +311,7 @@ export default function Home() {
                       </div>
                     )}
 
-                    {/* Output Length Slider positioned above Analyze Document button */}
-                    <div className="mt-6 mb-4 flex justify-center relative">
-                      <div
-                        className="w-full"
-                        style={{
-                          width: buttonDimensions.width > 0 ? `${buttonDimensions.width}px` : 'auto',
-                          transition: 'width 0.2s ease'
-                        }}
-                      >
-                        <OutputLengthSlider
-                          value={outputLength}
-                          onChange={handleOutputLengthChange}
-                          min={100}
-                          max={1000}
-                          step={50}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="mt-2">
+                    <div className="mt-6">
                       <ErrorMessage message={analyzeError || ''} className="mb-3" />
 
                       <div className="flex justify-center">
@@ -331,16 +323,11 @@ export default function Home() {
                             }`}
                         >
                           <span className="brightness-110">Analyze Document</span>
-                          {!session && <span className="brightness-110"> (Sign in to save results)</span>}
                         </button>
                       </div>
                     </div>
 
-                    {!session && (
-                      <div className="mt-3 text-center text-sm text-gray-500 dark:text-gray-400">
-                        Sign in to save your analysis results for future reference
-                      </div>
-                    )}
+                    {/* Removed the sign-in message */}
                   </>
                 )}
               </div>
