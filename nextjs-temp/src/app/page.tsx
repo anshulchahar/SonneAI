@@ -38,27 +38,13 @@ export default function Home() {
 
   // References for measuring button dimensions
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const [buttonDimensions, setButtonDimensions] = useState({ width: 0, left: 0 });
 
   // Effect to measure the button dimensions
   useEffect(() => {
     const updateButtonMeasurements = () => {
-      if (buttonRef.current) {
-        const buttonRect = buttonRef.current.getBoundingClientRect();
-        const parentRect = buttonRef.current.parentElement?.getBoundingClientRect() || { left: 0 };
-
-        // Calculate relative position within parent
-        const relativeLeft = buttonRect.left - parentRect.left;
-
-        setButtonDimensions({
-          width: buttonRect.width,
-          left: relativeLeft
-        });
-      }
+      // We're no longer using button measurements so we can simplify this function
+      // The ref is still kept in case we need to use it in the future
     };
-
-    // Set initial measurements
-    updateButtonMeasurements();
 
     // Update measurements on window resize
     window.addEventListener('resize', updateButtonMeasurements);
@@ -255,6 +241,17 @@ export default function Home() {
                       disabled={isAnalyzing}
                     />
 
+                    {/* Output Length Slider positioned directly after FileUpload */}
+                    <div className="mt-4 mb-4 w-full">
+                      <OutputLengthSlider
+                        value={outputLength}
+                        onChange={handleOutputLengthChange}
+                        min={100}
+                        max={1000}
+                        step={50}
+                      />
+                    </div>
+
                     {error && (
                       <div className="mt-4">
                         <ErrorMessage message={error} />
@@ -300,26 +297,7 @@ export default function Home() {
                       </div>
                     )}
 
-                    {/* Output Length Slider positioned above Analyze Document button */}
-                    <div className="mt-6 mb-4 flex justify-center relative">
-                      <div
-                        className="w-full"
-                        style={{
-                          width: buttonDimensions.width > 0 ? `${buttonDimensions.width}px` : 'auto',
-                          transition: 'width 0.2s ease'
-                        }}
-                      >
-                        <OutputLengthSlider
-                          value={outputLength}
-                          onChange={handleOutputLengthChange}
-                          min={100}
-                          max={1000}
-                          step={50}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="mt-2">
+                    <div className="mt-6">
                       <ErrorMessage message={analyzeError || ''} className="mb-3" />
 
                       <div className="flex justify-center">
@@ -331,16 +309,11 @@ export default function Home() {
                             }`}
                         >
                           <span className="brightness-110">Analyze Document</span>
-                          {!session && <span className="brightness-110"> (Sign in to save results)</span>}
                         </button>
                       </div>
                     </div>
 
-                    {!session && (
-                      <div className="mt-3 text-center text-sm text-gray-500 dark:text-gray-400">
-                        Sign in to save your analysis results for future reference
-                      </div>
-                    )}
+                    {/* Removed the sign-in message */}
                   </>
                 )}
               </div>
