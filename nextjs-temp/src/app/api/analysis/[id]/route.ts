@@ -1,11 +1,9 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
 import { withAuth } from '@/utils/apiMiddleware';
 import { errorResponse } from '@/utils/apiUtils';
 import { getCachedAnalysis, cacheAnalysisResult } from '@/utils/cache';
 import { AnalysisResult } from '@/types/api';
-
-const prisma = new PrismaClient();
+import { supabaseAdmin } from '@/lib/supabase';
 
 export const GET = withAuth(async (req, session) => {
     try {
@@ -26,15 +24,15 @@ export const GET = withAuth(async (req, session) => {
             return errorResponse('User not authenticated', 401);
         }
 
-        // Fetch analysis from database
-        const analysis = await prisma.analysis.findUnique({
-            where: {
-                id,
-                userId: session.user.id, // Ensure it belongs to the authenticated user
-            },
-        });
+        // Fetch analysis from database using Supabase
+        const { data: analysis, error } = await supabaseAdmin
+            .from('analysis')
+            .select('*')
+            .eq('id', id)
+            .eq('userId', session.user.id)
+            .single();
 
-        if (!analysis) {
+        if (error || !analysis) {
             return errorResponse('Analysis not found', 404);
         }
 

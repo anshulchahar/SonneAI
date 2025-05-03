@@ -2,26 +2,15 @@
 
 Welcome to Sonne! This application leverages AI to provide insightful analysis of your PDF documents. It's built using modern web technologies for a fast, responsive, and feature-rich experience.
 
-## Features
+## Features and Technologies
 
-- **AI-Powered Analysis:** Utilizes Google's Gemini AI to understand and summarize PDF content, extract key information, and answer questions about the documents.
-- **Secure Authentication:** Integrates with Google OAuth for easy and secure user login via NextAuth.js.
-- **Document History:** Keeps track of previously analyzed documents and their results for easy access.
-- **Multi-File Comparison:** Allows users to upload and compare multiple documents simultaneously (feature details TBD).
-- **Modern UI:** Built with Tailwind CSS for a clean, responsive, and customizable user interface.
-- **Server-Side Rendering (SSR):** Leverages Next.js for improved performance and SEO.
-- **Type Safety:** Developed with TypeScript for enhanced code quality and maintainability.
-
-## Technologies Used
-
-- **Frontend Framework:** [Next.js](https://nextjs.org/) (React framework) - Chosen for its features like SSR, routing, API routes, and overall developer experience.
-- **UI Library:** [React](https://reactjs.org/) - The core library for building user interfaces.
-- **Styling:** [Tailwind CSS](https://tailwindcss.com/) - A utility-first CSS framework for rapid UI development.
-- **Backend:** [Next.js API Routes](https://nextjs.org/docs/api-routes/introduction) - Used for creating serverless API endpoints within the Next.js application.
-- **Authentication:** [NextAuth.js](https://next-auth.js.org/) - Simplifies authentication implementation, configured here with the Google OAuth provider.
-- **Database ORM:** [Prisma](https://www.prisma.io/) - A modern database toolkit making database access easy and type-safe. Configured with SQLite for development.
-- **AI Model:** [Google Gemini API](https://ai.google.dev/) - Provides the core AI capabilities for document analysis.
-- **Language:** [TypeScript](https://www.typescriptlang.org/) - Adds static typing to JavaScript, improving code reliability and developer productivity.
+- **Framework:** [Next.js 14](https://nextjs.org/) - React framework with App Router for server-side rendering and API routes
+- **UI Components:** [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework for rapid UI development
+- **Authentication:** [NextAuth.js](https://next-auth.js.org/) - Flexible authentication for Next.js applications
+- **AI Integration:** [Google Gemini API](https://ai.google.dev/) - Advanced AI models for document analysis
+- **Database:** [Supabase](https://supabase.io/) - An open source Firebase alternative with PostgreSQL database
+- **PDF Processing:** [pdf-parse](https://www.npmjs.com/package/pdf-parse) - JavaScript library for extracting text from PDFs
+- **File Handling:** [react-dropzone](https://react-dropzone.js.org/) - React hook for file uploads
 
 ## Getting Started
 
@@ -56,8 +45,9 @@ Follow these steps to set up the project locally for development.
     Create a file named `.env` in the root directory of the project. Copy the contents of `.env.example` (if it exists) or add the following variables, replacing the placeholder values with your actual credentials:
 
     ```env
-    # Database connection string (SQLite file in prisma folder)
-    DATABASE_URL="file:./dev.db"
+    # Database connection string (Supabase URL and key)
+    SUPABASE_URL="your-supabase-url"
+    SUPABASE_KEY="your-supabase-key"
 
     # Google OAuth Credentials
     GOOGLE_CLIENT_ID="your-google-client-id"
@@ -75,13 +65,7 @@ Follow these steps to set up the project locally for development.
     **Important:** Never commit your `.env` file to version control. Add it to your `.gitignore` file.
 
 4.  **Initialize and Prepare the Database:**
-    These commands use Prisma to:
-    - `db push`: Synchronize your database schema with the Prisma schema file (`prisma/schema.prisma`). Creates the SQLite database file (`dev.db`) if it doesn't exist.
-    - `generate`: Generate the Prisma Client based on your schema, providing type-safe database access.
-    ```bash
-    npx prisma db push
-    npx prisma generate
-    ```
+    Run the SQL commands in the `supabase-schema.sql` file in your Supabase SQL editor to set up the database schema. You can access the SQL editor from your Supabase dashboard.
 
 5.  **Run the Development Server:**
     ```bash
@@ -118,7 +102,7 @@ Instructions for deploying the application will vary depending on your chosen pl
 
 Ensure you set the necessary environment variables on your deployment platform. You might need to configure the `NEXTAUTH_URL` to match your production domain.
 
-For database deployment, consider using a managed database service compatible with Prisma instead of SQLite for production environments.
+For database deployment, consider using Supabase for production environments.
 
 ## Architecture
 
@@ -132,11 +116,7 @@ The project follows a standard Next.js application structure:
     -   `ui/`: Often contains primitive UI components, potentially integrated with a UI library like Shadcn/ui.
     -   `auth/`: Components specific to authentication flows.
     -   `dashboard/`: Components specific to the main application dashboard.
--   `src/lib/` or `src/utils/`: Utility functions, helper scripts, configuration files (e.g., Prisma client instance, AI client setup).
--   `prisma/`: Contains database-related files.
-    -   `schema.prisma`: Defines the database schema.
-    -   `migrations/`: Stores database migration history (used with `prisma migrate dev`).
-    -   `dev.db`: The SQLite database file (for development).
+-   `src/lib/` or `src/utils/`: Utility functions, helper scripts, configuration files (e.g., Supabase client instance, AI client setup).
 -   `public/`: Static assets like images, fonts, etc., accessible directly via the root URL.
 -   `tailwind.config.ts`, `postcss.config.js`: Configuration files for Tailwind CSS.
 -   `next.config.mjs`: Configuration file for Next.js.

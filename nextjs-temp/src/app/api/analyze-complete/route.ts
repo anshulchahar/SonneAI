@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { PrismaClient } from '@prisma/client';
+
 import { authOptions } from '@/config/auth';
 import { GeminiService } from '@/services/gemini';
 import mammoth from 'mammoth';
 
-const prisma = new PrismaClient();
+import { supabaseAdmin } from '@/lib/supabase';
+import { v4 as uuidv4 } from 'uuid';
 
 // File type constants
 const FILE_TYPES = {
@@ -139,17 +140,24 @@ export async function POST(req: NextRequest) {
                         customPrompt: customPrompt || ""
                     };
 
-                    await prisma.analysis.create({
-                        data: {
+                    const { error } = await supabaseAdmin
+                        .from('analysis')
+                        .insert({
+                            id: uuidv4(),
                             userId: session.user.id,
                             filename: files.map(f => f.name).join(', '),
                             summary: result.summary,
                             keyPoints: JSON.stringify(result.keyPoints),
                             analysis: JSON.stringify(analysisData)
-                        },
-                    });
-                    console.log('Analysis saved to database for user:', session.user.id);
+                        });
+
+                    if (error) {
+                        console.error('Supabase error saving analysis:', error);
+                    } else {
+                        console.log('Analysis saved to database for user:', session.user.id);
+                    }
                 }
+
             } catch (dbError) {
                 console.error('Database error (non-critical):', dbError);
                 // Continue - DB errors shouldn't prevent returning the analysis
