@@ -42,15 +42,9 @@ export default function Home() {
   // Effect to measure the button dimensions
   useEffect(() => {
     const updateButtonMeasurements = () => {
-      if (buttonRef.current) {
-        const buttonRect = buttonRef.current.getBoundingClientRect();
-        // We're not using these measurements anymore, so we can remove the calculations
-        // that lead to unused variables
-      }
+      // We're no longer using button measurements so we can simplify this function
+      // The ref is still kept in case we need to use it in the future
     };
-
-    // Set initial measurements
-    updateButtonMeasurements();
 
     // Update measurements on window resize
     window.addEventListener('resize', updateButtonMeasurements);
