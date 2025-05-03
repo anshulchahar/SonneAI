@@ -1,12 +1,12 @@
-import type { Adapter } from 'next-auth/adapters';
+import type { Adapter, AdapterAccount, AdapterUser } from 'next-auth/adapters';
 import { supabaseAdmin } from './supabase';
 import { v4 as uuidv4 } from 'uuid';
 
 export function SupabaseAdapter(): Adapter {
   return {
-    async createUser(user) {
+    async createUser(user: Omit<AdapterUser, "id">) {
       const uuid = uuidv4();
-      const { data, error } = await supabaseAdmin
+      const { error } = await supabaseAdmin
         .from('users')
         .insert({
           id: uuid,
@@ -28,7 +28,7 @@ export function SupabaseAdapter(): Adapter {
       };
     },
 
-    async getUser(id) {
+    async getUser(id: string) {
       const { data, error } = await supabaseAdmin
         .from('users')
         .select('*')
@@ -47,7 +47,7 @@ export function SupabaseAdapter(): Adapter {
       };
     },
 
-    async getUserByEmail(email) {
+    async getUserByEmail(email: string) {
       const { data, error } = await supabaseAdmin
         .from('users')
         .select('*')
@@ -65,7 +65,7 @@ export function SupabaseAdapter(): Adapter {
       };
     },
 
-    async getUserByAccount({ providerAccountId, provider }) {
+    async getUserByAccount({ providerAccountId, provider }: { providerAccountId: string; provider: string }) {
       const { data: accountData, error: accountError } = await supabaseAdmin
         .from('accounts')
         .select('*')
@@ -92,7 +92,7 @@ export function SupabaseAdapter(): Adapter {
       };
     },
 
-    async updateUser(user) {
+    async updateUser(user: Partial<AdapterUser> & { id: string }) {
       const { data, error } = await supabaseAdmin
         .from('users')
         .update({
@@ -116,7 +116,7 @@ export function SupabaseAdapter(): Adapter {
       };
     },
 
-    async deleteUser(userId) {
+    async deleteUser(userId: string) {
       const { error } = await supabaseAdmin
         .from('users')
         .delete()
@@ -125,7 +125,7 @@ export function SupabaseAdapter(): Adapter {
       if (error) throw error;
     },
 
-    async linkAccount(account) {
+    async linkAccount(account: AdapterAccount) {
       const { error } = await supabaseAdmin.from('accounts').insert({
         id: uuidv4(),
         userId: account.userId,
@@ -145,7 +145,7 @@ export function SupabaseAdapter(): Adapter {
       return account;
     },
 
-    async unlinkAccount({ providerAccountId, provider }) {
+    async unlinkAccount({ providerAccountId, provider }: { providerAccountId: string; provider: string }) {
       const { error } = await supabaseAdmin
         .from('accounts')
         .delete()
@@ -154,7 +154,7 @@ export function SupabaseAdapter(): Adapter {
       if (error) throw error;
     },
 
-    async createSession({ sessionToken, userId, expires }) {
+    async createSession({ sessionToken, userId, expires }: { sessionToken: string; userId: string; expires: Date }) {
       const { error } = await supabaseAdmin.from('sessions').insert({
         id: uuidv4(),
         userId,
@@ -172,7 +172,7 @@ export function SupabaseAdapter(): Adapter {
       };
     },
 
-    async getSessionAndUser(sessionToken) {
+    async getSessionAndUser(sessionToken: string) {
       const { data: sessionData, error: sessionError } = await supabaseAdmin
         .from('sessions')
         .select('*')
@@ -206,7 +206,7 @@ export function SupabaseAdapter(): Adapter {
       };
     },
 
-    async updateSession({ sessionToken, expires, userId }) {
+    async updateSession({ sessionToken, expires, userId }: { sessionToken: string; expires?: Date; userId?: string }) {
       const { data, error } = await supabaseAdmin
         .from('sessions')
         .update({
@@ -227,7 +227,7 @@ export function SupabaseAdapter(): Adapter {
       };
     },
 
-    async deleteSession(sessionToken) {
+    async deleteSession(sessionToken: string) {
       const { error } = await supabaseAdmin
         .from('sessions')
         .delete()
