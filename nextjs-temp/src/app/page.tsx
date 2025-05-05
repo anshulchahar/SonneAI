@@ -179,19 +179,25 @@ export default function Home() {
 
           // Handle OCR results which may have a different structure
           if (endpoint === '/api/ocr') {
-            // Convert OCR results to the format expected by the UI
-            const ocrResults = result.results;
+            // Check if Gemini analysis results are available in the response
+            if (result.analysis) {
+              // Use the Gemini analysis from the OCR response
+              setAnalysisResult(result.analysis);
+            } else {
+              // Fallback to the old behavior if no analysis is provided
+              const ocrResults = result.results;
 
-            // Create a result object that matches the expected AnalysisResult structure
-            const analysisData = {
-              summary: 'Text extracted using OCR technology',
-              keyPoints: ['Text was extracted from scanned documents or images using Azure Computer Vision OCR'],
-              detailedAnalysis: ocrResults.map(r => `${r.info.filename}:\n${r.text}`).join('\n\n'),
-              recommendations: [],
-              fileInfo: ocrResults.map(r => r.info),
-            };
+              // Create a result object that matches the expected AnalysisResult structure
+              const analysisData = {
+                summary: 'Text extracted using OCR technology',
+                keyPoints: ['Text was extracted from scanned documents or images using Azure Computer Vision OCR'],
+                detailedAnalysis: ocrResults.map(r => `${r.info.filename}:\n${r.text}`).join('\n\n'),
+                recommendations: [],
+                fileInfo: ocrResults.map(r => r.info),
+              };
 
-            setAnalysisResult(analysisData);
+              setAnalysisResult(analysisData);
+            }
           } else {
             // Standard analysis results
             setAnalysisResult(result);

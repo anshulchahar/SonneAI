@@ -4,6 +4,8 @@ import { authOptions } from '@/config/auth';
 import { supabaseAdmin } from '@/lib/supabase';
 import { v4 as uuidv4 } from 'uuid';
 import ocrService from '@/services/ocr';
+import { GeminiService } from '@/services/gemini';
+import { AnalysisResult } from '@/types/api';
 
 export async function POST(req: NextRequest) {
     try {
@@ -58,10 +60,38 @@ export async function POST(req: NextRequest) {
             // Process files with the OCR service
             const processedFiles = await ocrService.processFiles(ocrCompatibleFiles);
 
-            // Create the result object
+            // Combine all extracted text for Gemini analysis
+            const extractedTexts = processedFiles.map(file => file.text);
+
+            // Initialize Gemini service for analysis
+            let analysisResult: AnalysisResult | null = null;
+            try {
+                console.log('Initializing Gemini service for OCR text analysis...');
+                const geminiService = new GeminiService();
+
+                // Get output length from form data or use default
+                const outputLength = formData.get('outputLength') ?
+                    parseInt(formData.get('outputLength') as string, 10) :
+                    500;
+
+                // Get custom prompt from form data if present
+                const customPrompt = formData.get('customPrompt') as string || null;
+
+                console.log(`Sending ${extractedTexts.length} OCR documents to Gemini API for analysis with output length: ${outputLength}...`);
+                const analysisText = await geminiService.analyzeDocuments(extractedTexts, customPrompt, outputLength);
+
+                console.log('Parsing Gemini analysis response for OCR text...');
+                analysisResult = GeminiService.parseAnalysisResponse(analysisText);
+            } catch (geminiError) {
+                console.error('Error with Gemini analysis of OCR text:', geminiError);
+                // Continue with original OCR results even if Gemini analysis fails
+            }
+
+            // Create the result object with OCR results and Gemini analysis
             const result = {
                 results: processedFiles,
-                message: 'OCR processing completed successfully'
+                message: 'OCR processing completed successfully',
+                analysis: analysisResult
             };
 
             // Save to database if user is authenticated
@@ -71,7 +101,14 @@ export async function POST(req: NextRequest) {
                 if (session?.user?.id) {
                     // Combine all extracted text for database summary
                     const combinedText = processedFiles.map(file => file.text).join('\n\n');
-                    const summary = 'Text extracted using OCR technology';
+
+                    // Get summary from Gemini analysis if available, or use default
+                    const summary = analysisResult?.summary || 'Text extracted using OCR technology';
+
+                    // Get key points from Gemini analysis if available, or use default
+                    const keyPoints = analysisResult?.keyPoints && analysisResult.keyPoints.length > 0
+                        ? analysisResult.keyPoints
+                        : ['Text extracted using Azure Computer Vision OCR'];
 
                     // Store in database
                     const { error } = await supabaseAdmin
@@ -81,19 +118,21 @@ export async function POST(req: NextRequest) {
                             userId: session.user.id,
                             filename: ocrCompatibleFiles.map(f => f.name).join(', '),
                             summary: summary,
-                            keyPoints: JSON.stringify(['Text extracted using Azure Computer Vision OCR']),
+                            keyPoints: JSON.stringify(keyPoints),
                             analysis: JSON.stringify({
-                                summary,
-                                detailedAnalysis: combinedText,
+                                summary: summary,
+                                detailedAnalysis: analysisResult?.detailedAnalysis || combinedText,
                                 fileInfo: processedFiles.map(file => file.info),
-                                ocrProcessed: true
+                                ocrProcessed: true,
+                                recommendations: analysisResult?.recommendations || [],
+                                keyPoints: keyPoints
                             })
                         });
 
                     if (error) {
                         console.error('Supabase error saving OCR results:', error);
                     } else {
-                        console.log('OCR results saved to database for user:', session.user.id);
+                        console.log('OCR results with Gemini analysis saved to database for user:', session.user.id);
                     }
                 }
             } catch (dbError) {
@@ -101,7 +140,7 @@ export async function POST(req: NextRequest) {
                 // Continue - DB errors shouldn't prevent returning the OCR results
             }
 
-            console.log('Returning OCR processing results');
+            console.log('Returning OCR processing results with Gemini analysis');
             return NextResponse.json(result);
 
         } catch (ocrError) {
