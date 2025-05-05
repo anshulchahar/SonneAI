@@ -14,11 +14,12 @@ export function validateFile(file: File): ValidationResult {
         };
     }
 
-    // Check file type
-    if (!file.type.match(/application\/pdf/)) {
+    // Check file type - now supporting both PDFs and images
+    const acceptedTypes = Object.keys(FILE_CONSTRAINTS.ACCEPTED_FILE_TYPES);
+    if (!acceptedTypes.includes(file.type)) {
         return {
             isValid: false,
-            error: ERROR_MESSAGES.INVALID_FILE_TYPE,
+            error: 'Only PDF and image files (JPEG, PNG, TIFF, BMP, GIF) are accepted',
         };
     }
 

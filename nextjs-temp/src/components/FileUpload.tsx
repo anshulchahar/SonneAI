@@ -9,6 +9,8 @@ interface FileUploadProps {
     onFileRemoved: (index: number) => void;
     disabled?: boolean;
     maxFileSizeMb?: number;
+    useOcr?: boolean;
+    onOcrToggle?: (enabled: boolean) => void;
 }
 
 // Valid file types and their display names
@@ -17,6 +19,11 @@ const VALID_FILE_TYPES = {
     'text/markdown': 'Markdown',
     'text/plain': 'Text',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'DOCX',
+    'image/jpeg': 'JPEG',
+    'image/png': 'PNG',
+    'image/tiff': 'TIFF',
+    'image/bmp': 'BMP',
+    'image/gif': 'GIF',
 };
 
 // File type by extension mapping (for cases where MIME type is not reliable)
@@ -25,6 +32,13 @@ const FILE_EXTENSIONS: Record<string, string> = {
     'md': 'text/markdown',
     'txt': 'text/plain',
     'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'jpg': 'image/jpeg',
+    'jpeg': 'image/jpeg',
+    'png': 'image/png',
+    'tif': 'image/tiff',
+    'tiff': 'image/tiff',
+    'bmp': 'image/bmp',
+    'gif': 'image/gif',
 };
 
 export default function FileUpload({
@@ -33,6 +47,8 @@ export default function FileUpload({
     onFileRemoved,
     disabled = false,
     maxFileSizeMb = 10, // Default max file size: 10MB
+    useOcr = false,
+    onOcrToggle,
 }: FileUploadProps) {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [isDragging, setIsDragging] = useState(false);
@@ -109,7 +125,7 @@ export default function FileUpload({
         const validTypeFiles = newFiles.filter(file => {
             const isValid = isValidFileType(file);
             if (!isValid) {
-                setError(`Unsupported file type. Please upload PDF (.pdf), Markdown (.md), DOCX (.docx), or text (.txt) files only.`);
+                setError(`Unsupported file type. Please upload PDF, image (JPEG, PNG, TIFF, BMP, GIF), Markdown, DOCX, or text files only.`);
                 return false;
             }
             return true;
@@ -181,6 +197,16 @@ export default function FileUpload({
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                 );
+            case 'image/jpeg':
+            case 'image/png':
+            case 'image/tiff':
+            case 'image/bmp':
+            case 'image/gif':
+                return (
+                    <svg className="h-6 w-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                );
             default:
                 return (
                     <svg className="h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -189,6 +215,12 @@ export default function FileUpload({
                 );
         }
     };
+
+    // Determine if we have any scanned documents or images that might need OCR
+    const hasOcrCompatibleFiles = files.some(file => {
+        const type = getStandardizedType(file);
+        return type === 'application/pdf' || type.startsWith('image/');
+    });
 
     return (
         <div className="w-full max-w-full space-y-4 sm:space-y-6">
@@ -210,7 +242,7 @@ export default function FileUpload({
                     ref={fileInputRef}
                     className="hidden"
                     onChange={handleFileSelect}
-                    accept=".pdf,.md,.txt,.docx,application/pdf,text/markdown,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    accept=".pdf,.md,.txt,.docx,.jpg,.jpeg,.png,.tif,.tiff,.bmp,.gif,application/pdf,text/markdown,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/png,image/tiff,image/bmp,image/gif"
                     multiple
                     disabled={disabled}
                 />
@@ -238,14 +270,32 @@ export default function FileUpload({
                     )}
                 </p>
                 <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    PDF, Markdown, DOCX, or text files up to {maxFileSizeMb}MB
+                    PDF, Images (JPEG, PNG, TIFF, BMP, GIF), Markdown, DOCX, or text files up to {maxFileSizeMb}MB
                     <span className="block mt-1">
-                        <strong>Note:</strong> Some PDFs with security features, scanned content, or embedded fonts may have extraction issues
+                        <strong>Note:</strong> Some PDFs with security features or embedded fonts may have extraction issues
                     </span>
                 </p>
             </div>
 
             <ErrorMessage message={error || ''} className="mb-4" />
+
+            {hasOcrCompatibleFiles && onOcrToggle && (
+                <div className="flex items-center">
+                    <input
+                        id="ocr-toggle"
+                        type="checkbox"
+                        className="h-4 w-4 text-gold-500 focus:ring-gold-500 border-gray-300 rounded cursor-pointer"
+                        checked={useOcr}
+                        onChange={(e) => onOcrToggle(e.target.checked)}
+                    />
+                    <label htmlFor="ocr-toggle" className="ml-2 block text-sm text-gray-700 dark:text-gray-300 cursor-pointer">
+                        Enable OCR for scanned documents and images
+                        <span className="block text-xs text-gray-500 dark:text-gray-400">
+                            Uses Azure Computer Vision to extract text from scanned PDFs and images
+                        </span>
+                    </label>
+                </div>
+            )}
 
             {files.length > 0 && (
                 <div className="space-y-2">
