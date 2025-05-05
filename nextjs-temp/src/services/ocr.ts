@@ -35,7 +35,8 @@ export class OCRService {
             const result = await this.client.readInStream(imageBuffer);
 
             // Get operation ID from result for polling
-            const operationId = result.operationLocation.split('/').pop();
+            const operationLocation = result.operationLocation.split('/');
+            const operationId = operationLocation.pop() || '';
 
             if (!operationId) {
                 throw new Error('Failed to get operation ID from Azure OCR service');
@@ -43,7 +44,7 @@ export class OCRService {
 
             // Poll for results until operation is complete
             let textResults;
-            let status = 'notStarted';
+            let status: string = 'notStarted';
 
             while (status !== 'succeeded' && status !== 'failed') {
                 // Wait for a second before checking status again
@@ -51,7 +52,7 @@ export class OCRService {
 
                 // Get the current status of the operation
                 const operationResult = await this.client.getReadResult(operationId);
-                status = operationResult.status;
+                status = operationResult.status || 'failed';
 
                 if (status === 'succeeded') {
                     textResults = operationResult.analyzeResult?.readResults;
