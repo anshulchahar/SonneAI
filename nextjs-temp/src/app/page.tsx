@@ -191,9 +191,9 @@ export default function Home() {
               const analysisData = {
                 summary: 'Text extracted using OCR technology',
                 keyPoints: ['Text was extracted from scanned documents or images using Azure Computer Vision OCR'],
-                detailedAnalysis: ocrResults.map(r => `${r.info.filename}:\n${r.text}`).join('\n\n'),
+                detailedAnalysis: ocrResults.map((r: { info: { filename: string }, text: string }) => `${r.info.filename}:\n${r.text}`).join('\n\n'),
                 recommendations: [],
-                fileInfo: ocrResults.map(r => r.info),
+                fileInfo: ocrResults.map((r: { info: { filename: string, character_count: number } }) => r.info),
               };
 
               setAnalysisResult(analysisData);
