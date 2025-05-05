@@ -11,7 +11,7 @@ The Sonne team takes security issues seriously. We appreciate your efforts to re
 Instead, please report them by emailing us at (email to be added).
 
 Include the following information (as much as you can provide):
-- Description of the vulnerability/vulnerabilities
+- Description of the vulnerability
 - Steps to reproduce the issue
 - Affected versions
 - Any potential impacts of the vulnerability
