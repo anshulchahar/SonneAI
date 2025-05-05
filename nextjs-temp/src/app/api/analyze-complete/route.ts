@@ -41,13 +41,17 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        // Get files
-        const files = formData.getAll('pdfFiles') as File[];
+        // Get files - support both 'pdfFiles' (legacy) and 'files' (new consistent key)
+        let files = formData.getAll('files') as File[];
         if (!files || files.length === 0) {
-            return NextResponse.json(
-                { error: 'No files provided' },
-                { status: 400 }
-            );
+            // Try the legacy key as fallback
+            files = formData.getAll('pdfFiles') as File[];
+            if (!files || files.length === 0) {
+                return NextResponse.json(
+                    { error: 'No files provided' },
+                    { status: 400 }
+                );
+            }
         }
 
         // Get custom prompt if provided

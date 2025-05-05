@@ -8,6 +8,11 @@ export const FILE_CONSTRAINTS = {
     MAX_FILE_SIZE: 10 * 1024 * 1024, // 10MB
     ACCEPTED_FILE_TYPES: {
         'application/pdf': ['.pdf'],
+        'image/jpeg': ['.jpg', '.jpeg'],
+        'image/png': ['.png'],
+        'image/tiff': ['.tif', '.tiff'],
+        'image/bmp': ['.bmp'],
+        'image/gif': ['.gif'],
     },
 } as const;
 
@@ -36,7 +41,7 @@ export const EXPORT_FORMATS = {
 
 export const ERROR_MESSAGES = {
     FILE_TOO_LARGE: 'File size exceeds 10MB limit',
-    INVALID_FILE_TYPE: 'Only PDF files are accepted',
+    INVALID_FILE_TYPE: 'Only PDF and image files (JPEG, PNG, TIFF, BMP, GIF) are accepted',
     UNAUTHORIZED: 'Please sign in to continue',
     ANALYSIS_FAILED: 'Failed to analyze document',
     FETCH_FAILED: 'Failed to fetch data',
