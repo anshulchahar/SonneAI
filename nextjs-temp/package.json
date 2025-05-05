@@ -16,7 +16,7 @@
     }
   },
   "dependencies": {
-    "@auth/core": "0.34.2",
+    "@auth/core": "0.39.0",
     "@azure/cognitiveservices-computervision": "^8.2.0",
     "@emailjs/browser": "^4.4.1",
     "@google/generative-ai": "^0.2.0",
