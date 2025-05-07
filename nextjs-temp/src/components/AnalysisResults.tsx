@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import { Tab } from '@headlessui/react';
-import { DocumentIcon, AcademicCapIcon, ChatBubbleBottomCenterTextIcon, ClipboardIcon, DocumentDuplicateIcon } from '@heroicons/react/24/outline';
+import { DocumentIcon, AcademicCapIcon, ChatBubbleBottomCenterTextIcon, ClipboardIcon, DocumentDuplicateIcon, ChatBubbleLeftIcon } from '@heroicons/react/24/outline';
 import { AnalysisData } from '@/types/analysis';
 import DownloadButton from './DownloadButton';
+import ChatSection from './ChatSection';
 
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(' ');
@@ -21,6 +22,7 @@ export default function AnalysisResults({ analysis }: AnalysisResultsProps) {
         { id: 'detailedAnalysis', name: 'Details', icon: ChatBubbleBottomCenterTextIcon },
         { id: 'recommendations', name: 'Recommendations', icon: ClipboardIcon },
         { id: 'comparison', name: 'Comparison', icon: DocumentDuplicateIcon },
+        { id: 'chat', name: 'Chat', icon: ChatBubbleLeftIcon },
     ]);
 
     return (
@@ -163,6 +165,11 @@ export default function AnalysisResults({ analysis }: AnalysisResultsProps) {
                                     <p className="text-sm mt-2">This feature is available when analyzing multiple documents.</p>
                                 </div>
                             )}
+                        </Tab.Panel>
+
+                        {/* Chat Panel */}
+                        <Tab.Panel className="p-3">
+                            <ChatSection analysis={analysis} />
                         </Tab.Panel>
                     </Tab.Panels>
                 </Tab.Group>
