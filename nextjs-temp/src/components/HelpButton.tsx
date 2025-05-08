@@ -42,7 +42,7 @@ export default function HelpButton() {
             <button
                 ref={buttonRef}
                 onClick={toggleMenu}
-                className={`relative flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-tr from-primary to-primary-light hover:from-primary-dark hover:to-primary dark:from-primary-light dark:to-primary dark:hover:from-primary dark:hover:to-primary-light shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-1 transition-all duration-300 ease-in-out ${isOpen ? 'ring-2 ring-primary-light ring-opacity-60' : 'animate-pulse-subtle'}`}
+                className={`relative flex items-center justify-center w-10 h-10 rounded-full bg-primary hover:bg-primary-dark shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-1 transition-all duration-300 ease-in-out ${isOpen ? 'ring-2 ring-primary-light ring-opacity-60' : 'animate-pulse-subtle'}`}
                 aria-label="Help"
             >
                 {/* Modern question mark with glow effect */}
