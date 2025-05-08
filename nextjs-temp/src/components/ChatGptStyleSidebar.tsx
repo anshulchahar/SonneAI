@@ -104,10 +104,10 @@ export default function ChatGptStyleSidebar({
                 aria-label={isOpen ? "Close history sidebar" : "Open history sidebar"}
             >
                 {isOpen ? (
-                    <ChevronLeftIcon className="h-5 w-5 text-primary dark:text-primary-light" />
+                    <ChevronLeftIcon className="h-5 w-5 text-primary hover:text-primary-dark" />
                 ) : (
                     <div className="relative">
-                        <BookOpenIcon className="h-5 w-5 text-primary dark:text-primary-light" />
+                        <BookOpenIcon className="h-5 w-5 text-primary hover:text-primary-dark" />
                         {history.length > 0 && (
                             <span className="absolute -top-2 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary dark:bg-primary-light text-[10px] font-medium text-white">
                                 {history.length > 99 ? '99+' : history.length}
