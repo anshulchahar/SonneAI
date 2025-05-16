@@ -1,22 +1,17 @@
-# Terms and Conditions for SonneAI
-
-**Effective Date:** [Insert Date]  
-**Last Updated:** [Insert Date]
-
-Welcome to SonneAI ("we," "our," or "us"). By accessing or using our website and services, you ("user" or "you") agree to comply with and be bound by the following Terms and Conditions. Please read these terms carefully before using SonneAI.
+Welcome to SonneAI. By accessing or using our website and services, you agree to comply with and be bound by the following Terms and Conditions. Please read these terms carefully before using SonneAI.
 
 ## 1. Acceptance of Terms
-By accessing or using SonneAI, you confirm that you have read, understood, and agree to be bound by these Terms and Conditions and our [Privacy Policy].
-
-If you do not agree to these terms, you must not use the service.
+By accessing or using SonneAI, you confirm that you have read, understood, and agree to be bound by these Terms and Conditions and our Privacy Policy.
 
 ## 2. Description of Service
-SonneAI is a web-based platform that allows users to upload documents for automated AI-driven analysis and interpretation using advanced language models (including Google's Gemini API). Features include:
+SonneAI is a web-based platform that uses advanced AI to analyze your documents, extract key information, and provide actionable insights. Simply upload your document, and our system will process it automatically using state-of-the-art language models. Features include:
 
 - Document upload and AI-powered content analysis
 - Visualization of analysis results
-- Secure Google OAuth 2.0 login
-- Retrieval-Augmented Generation (RAG)-based chatbot (in development)
+- Retrieval-Augmented Generation (RAG)-based chatbot
+- Ability to revisit uploaded documents and their analysis results
+
+SonneAI currently supports the analysis of PDF documents. We are actively working on expanding support to other formats such as DOCX, TXT, and more in the future.
 
 ## 3. User Accounts and Authentication
 You must authenticate using Google Sign-In via OAuth 2.0 to access SonneAI services. You agree to:
@@ -36,14 +31,18 @@ You agree not to upload content that:
 - Infringes on third-party rights
 - Contains malicious code or viruses
 
+In case of any violations of these rights, your user account will be blocked from further usage. Additionally, any attempts to circumvent these restrictions or inject unauthorized information into the functioning of the website will result in immediate account suspension.
+
 ## 5. Data Storage and Security
-All documents and user data are stored securely using SQLite. We implement industry-standard security practices, including:
+All documents and user data are stored securely using robust database solutions. We implement industry-standard security practices, including:
 
-- Environment variable management
-- Secure API key storage
-- Limited data retention and access controls
+- Encryption of data at rest and in transit
+- Secure management of environment variables and API keys
+- Strict access controls and regular security audits
 
-However, no system is completely secure, and you acknowledge the inherent risks of data transmission over the internet.
+While we strive to ensure the highest level of security, no system can be completely secure. By using our services, you acknowledge and accept the inherent risks associated with data transmission and storage over the internet.
+
+Your documents are encrypted in transit and at rest. We do not share your data with third parties. For more information, please see our Privacy Policy.
 
 ## 6. Use of AI and Limitations
 The AI models (including Google Gemini) used for analysis may generate interpretations that are probabilistic and not always accurate. The outputs:
@@ -82,4 +81,7 @@ These Terms and Conditions shall be governed by and interpreted in accordance wi
 
 ## 12. Contact
 For questions or concerns regarding these Terms and Conditions, please contact us at:  
-📧 [your-email@example.com]
+📧 //email address
+
+## 13. Free Account Limitations
+Free accounts can analyze up to 5 documents per month. For unlimited analyses, please check our pricing plans.
