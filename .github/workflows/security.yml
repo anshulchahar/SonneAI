@@ -16,7 +16,7 @@ jobs:
           fetch-depth: 0  # Fetch all history for all branches and tags
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '20'
           # Remove cache property to avoid errors when lock file doesn't exist
