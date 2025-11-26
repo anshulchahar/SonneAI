@@ -16,7 +16,7 @@ jobs:
     name: TypeScript & Next.js Linting
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0  # Fetching the whole history to compare changes
       
@@ -69,7 +69,7 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
       with:
         fetch-depth: 1  # Shallow clone for speed
     
@@ -118,7 +118,7 @@ jobs:
       AZURE_COMPUTER_VISION_KEY: ${{ secrets.AZURE_COMPUTER_VISION_KEY }}
       AZURE_COMPUTER_VISION_REGION: ${{ secrets.AZURE_COMPUTER_VISION_REGION }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Setup Node.js
         uses: actions/setup-node@v4
