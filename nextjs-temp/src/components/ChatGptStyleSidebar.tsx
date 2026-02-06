@@ -15,13 +15,15 @@ interface ChatGptStyleSidebarProps {
     isOpen: boolean;
     onClose: () => void;
     onHistoryUpdated?: () => void;
+    onChatWithDocument?: (documentId: string) => void;
 }
 
 export default function ChatGptStyleSidebar({
     history,
     isOpen,
     onClose,
-    onHistoryUpdated
+    onHistoryUpdated,
+    onChatWithDocument
 }: ChatGptStyleSidebarProps) {
     const pathname = usePathname();
     const router = useRouter();
@@ -82,9 +84,18 @@ export default function ChatGptStyleSidebar({
                 throw new Error(errData.error || 'Ingestion failed');
             }
 
+            const ingestData = await ingestRes.json();
+            const newDocId = ingestData.documents?.[0]?.document_id;
+
             toast.success(`"${item.filename}" added for chat`);
-            // Navigate to dashboard with chat tab active
-            router.push('/?tab=chat');
+
+            // Notify parent to switch to chat tab and select the new document
+            if (onChatWithDocument && newDocId) {
+                onChatWithDocument(newDocId);
+            } else {
+                // Fallback: navigate to chat tab
+                router.push('/?tab=chat');
+            }
         } catch (error) {
             console.error('Error ingesting for chat:', error);
             toast.error(error instanceof Error ? error.message : 'Failed to add document for chat');
@@ -247,8 +258,8 @@ export default function ChatGptStyleSidebar({
                                                 onClick={(e) => handleChatClick(e, item)}
                                                 disabled={ingestingIds.has(item.id)}
                                                 className={`p-1.5 rounded-full transition-all duration-150 ${ingestingIds.has(item.id)
-                                                        ? 'text-primary animate-pulse'
-                                                        : 'text-gray-400 hover:text-primary dark:text-gray-500 dark:hover:text-primary-light hover:bg-primary/10 dark:hover:bg-primary/20'
+                                                    ? 'text-primary animate-pulse'
+                                                    : 'text-gray-400 hover:text-primary dark:text-gray-500 dark:hover:text-primary-light hover:bg-primary/10 dark:hover:bg-primary/20'
                                                     }`}
                                                 aria-label={`Add ${item.filename} for chat`}
                                                 title="Add to chat — process with embeddings"

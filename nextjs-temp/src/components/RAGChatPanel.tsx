@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, KeyboardEvent } from 'react';
 import { useSession } from 'next-auth/react';
 import { ArrowPathIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
-import { useSidebar } from '@/contexts/SidebarContext';
+
 
 interface ChatMessage {
     id: string;
@@ -33,7 +33,7 @@ export default function RAGChatPanel({ selectedDocIds, hasDocuments }: RAGChatPa
     const [expandedSources, setExpandedSources] = useState<Set<string>>(new Set());
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
-    const { isOpen } = useSidebar();
+    const prevDocIdsRef = useRef<string[]>(selectedDocIds);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -42,6 +42,22 @@ export default function RAGChatPanel({ selectedDocIds, hasDocuments }: RAGChatPa
     useEffect(() => {
         scrollToBottom();
     }, [messages]);
+
+    // Reset conversation when document selection changes
+    useEffect(() => {
+        const prevIds = prevDocIdsRef.current;
+        const changed =
+            prevIds.length !== selectedDocIds.length ||
+            prevIds.some((id, i) => id !== selectedDocIds[i]);
+
+        if (changed && messages.length > 0) {
+            // Document selection changed mid-conversation — start fresh
+            setMessages([]);
+            setConversationId(null);
+            setExpandedSources(new Set());
+        }
+        prevDocIdsRef.current = selectedDocIds;
+    }, [selectedDocIds]);
 
     // Auto-resize textarea
     useEffect(() => {
@@ -222,7 +238,7 @@ export default function RAGChatPanel({ selectedDocIds, hasDocuments }: RAGChatPa
             </div>
 
             {/* Messages area */}
-            <div className="flex-1 overflow-y-auto px-3 py-4 space-y-4 min-h-[300px] max-h-[500px]">
+            <div className="flex-1 overflow-y-auto px-3 py-4 space-y-4 min-h-[300px]">
                 {messages.length === 0 && hasDocuments && (
                     <div className="flex flex-col items-center justify-center h-full py-12 text-center">
                         <div className="w-12 h-12 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center mb-3">
@@ -261,8 +277,8 @@ export default function RAGChatPanel({ selectedDocIds, hasDocuments }: RAGChatPa
                     >
                         <div
                             className={`max-w-[85%] rounded-2xl px-4 py-3 ${msg.role === 'user'
-                                    ? 'bg-primary text-white rounded-br-md'
-                                    : 'bg-gray-100 dark:bg-[#2C2C2C] text-gray-800 dark:text-gray-200 rounded-bl-md border border-gray-200 dark:border-gray-700'
+                                ? 'bg-primary text-white rounded-br-md'
+                                : 'bg-gray-100 dark:bg-[#2C2C2C] text-gray-800 dark:text-gray-200 rounded-bl-md border border-gray-200 dark:border-gray-700'
                                 }`}
                         >
                             <div className="text-sm leading-relaxed">
@@ -368,8 +384,8 @@ export default function RAGChatPanel({ selectedDocIds, hasDocuments }: RAGChatPa
                         onClick={handleSubmit}
                         disabled={isLoading || !input.trim() || !hasDocuments || !session?.user}
                         className={`p-1.5 rounded-full flex items-center justify-center text-white transition-colors min-w-7 min-h-7 ${!isLoading && input.trim() && hasDocuments && session?.user
-                                ? 'bg-primary hover:bg-primary-dark'
-                                : 'bg-gray-300 dark:bg-gray-600 cursor-not-allowed'
+                            ? 'bg-primary hover:bg-primary-dark'
+                            : 'bg-gray-300 dark:bg-gray-600 cursor-not-allowed'
                             }`}
                         title="Send message"
                     >

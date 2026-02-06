@@ -163,7 +163,7 @@ RETURNS TABLE (
   id UUID, document_id UUID, chunk_index INTEGER,
   content TEXT, metadata JSONB, similarity FLOAT
 )
-LANGUAGE plpgsql SECURITY DEFINER SET search_path = public
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, extensions
 AS $$
 BEGIN
   RETURN QUERY
@@ -190,7 +190,7 @@ RETURNS TABLE (
   id UUID, document_id UUID, chunk_index INTEGER,
   content TEXT, metadata JSONB, similarity FLOAT, combined_score FLOAT
 )
-LANGUAGE plpgsql SECURITY DEFINER SET search_path = public
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, extensions
 AS $$
 BEGIN
   RETURN QUERY
@@ -219,7 +219,7 @@ RETURNS TABLE (
   chunk_index INTEGER, similarity FLOAT,
   document_metadata JSONB, chunk_metadata JSONB
 )
-LANGUAGE plpgsql SECURITY DEFINER SET search_path = public
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, extensions
 AS $$
 BEGIN
   RETURN QUERY

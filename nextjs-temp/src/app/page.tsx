@@ -191,6 +191,28 @@ export default function Home() {
     }
   };
 
+  // Called from sidebar when user clicks "chat with this document"
+  const handleChatWithDocument = useCallback(async (documentId: string) => {
+    setActiveTab('chat');
+    // Re-fetch documents so the new one shows in the library
+    if (!session?.user) return;
+    try {
+      const res = await fetch('/api/rag/ingest');
+      if (res.ok) {
+        const data = await res.json();
+        const docs: RAGDocument[] = data.documents || [];
+        setRagDocuments(docs);
+        // Auto-select the new document (add to existing selection)
+        setSelectedDocIds(prev => {
+          if (prev.includes(documentId)) return prev;
+          return [...prev, documentId];
+        });
+      }
+    } catch (err) {
+      console.error('Error fetching RAG documents:', err);
+    }
+  }, [session]);
+
   const handleAnalyze = async () => {
     if (files.length === 0) {
       setAnalyzeError('Please upload at least one document before analyzing');
@@ -279,9 +301,9 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-[#1E1E1E] transition-colors duration-200">
-      <Navigation history={history} onHistoryUpdated={fetchHistory} />
+      <Navigation history={history} onHistoryUpdated={fetchHistory} onChatWithDocument={handleChatWithDocument} />
 
-      <div className={`pt-16 h-[calc(100vh)] flex flex-col transition-all duration-300 ease-in-out ${isOpen ? 'pl-64' : 'pl-16'}`}>
+      <div className={`pt-16 h-[calc(100vh)] flex flex-col transition-all duration-300 ease-in-out ${isOpen ? 'pl-72' : 'pl-16'}`}>
 
         {/* ===== Tab Switcher ===== */}
         <div className="flex-shrink-0 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-[#252525]">
@@ -289,8 +311,8 @@ export default function Home() {
             <button
               onClick={() => setActiveTab('analyze')}
               className={`relative flex items-center gap-2 px-6 py-3.5 text-sm font-medium transition-colors duration-200 ${activeTab === 'analyze'
-                  ? 'text-primary dark:text-primary-light'
-                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                ? 'text-primary dark:text-primary-light'
+                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                 }`}
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -305,8 +327,8 @@ export default function Home() {
             <button
               onClick={() => setActiveTab('chat')}
               className={`relative flex items-center gap-2 px-6 py-3.5 text-sm font-medium transition-colors duration-200 ${activeTab === 'chat'
-                  ? 'text-primary dark:text-primary-light'
-                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                ? 'text-primary dark:text-primary-light'
+                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                 }`}
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -468,8 +490,8 @@ export default function Home() {
                                 onClick={handleUploadOnly}
                                 disabled={isAnalyzing || isIngesting || files.length === 0}
                                 className={`px-6 py-3 border-2 border-primary text-base font-medium rounded-md text-primary dark:text-primary-light hover:bg-primary/10 dark:hover:bg-primary/20 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200 ${isAnalyzing || isIngesting || files.length === 0
-                                    ? 'opacity-50 cursor-not-allowed'
-                                    : ''
+                                  ? 'opacity-50 cursor-not-allowed'
+                                  : ''
                                   }`}
                                 title="Upload to document library without analyzing — chat with it afterwards"
                               >
@@ -497,7 +519,7 @@ export default function Home() {
             {/* Prompt bar — only visible in analyze tab when not showing results */}
             {!analysisResult && !isAnalyzing && (
               <div className="fixed bottom-0 left-0 right-0 z-20">
-                <div className={`transition-all duration-300 ease-in-out ${isOpen ? 'pl-64' : 'pl-16'}`}>
+                <div className={`transition-all duration-300 ease-in-out ${isOpen ? 'pl-72' : 'pl-16'}`}>
                   <PromptInputBar
                     customPrompt={customPrompt}
                     onCustomPromptChange={handleCustomPromptChange}
@@ -519,8 +541,8 @@ export default function Home() {
         {activeTab === 'chat' && (
           <div className="flex-1 flex overflow-hidden">
             {/* Document Library Sidebar */}
-            <div className="w-80 flex-shrink-0 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1E1E1E] overflow-y-auto">
-              <div className="p-4">
+            <div className="w-72 lg:w-80 flex-shrink-0 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1E1E1E] overflow-y-auto">
+              <div className="p-3 lg:p-4">
                 <div className="flex items-center gap-2 mb-4">
                   <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />

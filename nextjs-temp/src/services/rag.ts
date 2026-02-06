@@ -71,19 +71,24 @@ export class RAGService {
         const chunks = EmbeddingService.chunkText(content);
 
         if (chunks.length === 0) {
-            console.warn(`No chunks generated for document ${filename}`);
-            return {
-                document_id: documentId,
-                filename,
-                chunk_count: 0,
-                total_tokens: 0,
-            };
+            console.warn(`No chunks generated for document ${filename} (content length: ${content.length}). Removing orphaned document record.`);
+            await supabaseAdmin.from('documents').delete().eq('id', documentId);
+            throw new Error(`No text chunks could be generated from "${filename}". The document may be empty or contain only whitespace.`);
         }
 
         // 3. Generate embeddings for all chunks
         console.log(`Generating embeddings for ${chunks.length} chunks of ${filename}...`);
         const chunkTexts = chunks.map((c) => c.content);
-        const embeddings = await this.embeddingService.generateEmbeddings(chunkTexts);
+        let embeddings: number[][];
+        try {
+            embeddings = await this.embeddingService.generateEmbeddings(chunkTexts);
+            console.log(`Embeddings generated: ${embeddings.length} vectors, ${embeddings[0]?.length} dimensions each`);
+        } catch (embeddingError) {
+            console.error(`Embedding generation failed for ${filename}:`, embeddingError);
+            // Clean up the orphaned document record
+            await supabaseAdmin.from('documents').delete().eq('id', documentId);
+            throw new Error(`Failed to generate embeddings for "${filename}": ${embeddingError instanceof Error ? embeddingError.message : 'Unknown error'}`);
+        }
 
         // 4. Store chunks with embeddings
         let totalTokens = 0;
@@ -111,7 +116,10 @@ export class RAGService {
                 .insert(batch);
 
             if (chunkError) {
-                console.error(`Error storing chunk batch ${i / BATCH_SIZE}:`, chunkError);
+                console.error(`Error storing chunk batch ${i / BATCH_SIZE} for ${filename}:`, chunkError);
+                // Clean up: remove any chunks already inserted and the document record
+                await supabaseAdmin.from('document_chunks').delete().eq('document_id', documentId);
+                await supabaseAdmin.from('documents').delete().eq('id', documentId);
                 throw new Error(`Failed to store document chunks: ${chunkError.message}`);
             }
         }
