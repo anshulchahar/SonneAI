@@ -3,7 +3,6 @@ import deploymentConfig from './deployment.config.mjs';
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
   images: {
     remotePatterns: [
       {

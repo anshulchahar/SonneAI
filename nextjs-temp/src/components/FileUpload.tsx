@@ -9,8 +9,6 @@ interface FileUploadProps {
     onFileRemoved: (index: number) => void;
     disabled?: boolean;
     maxFileSizeMb?: number;
-    useOcr?: boolean;
-    onOcrToggle?: (enabled: boolean) => void;
 }
 
 // Valid file types and their display names
@@ -47,8 +45,6 @@ export default function FileUpload({
     onFileRemoved,
     disabled = false,
     maxFileSizeMb = 10, // Default max file size: 10MB
-    useOcr = false,
-    onOcrToggle,
 }: FileUploadProps) {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [isDragging, setIsDragging] = useState(false);
@@ -216,12 +212,6 @@ export default function FileUpload({
         }
     };
 
-    // Determine if we have any scanned documents or images that might need OCR
-    const hasOcrCompatibleFiles = files.some(file => {
-        const type = getStandardizedType(file);
-        return type === 'application/pdf' || type.startsWith('image/');
-    });
-
     return (
         <div className="w-full max-w-full space-y-4 sm:space-y-6">
             <div
@@ -278,24 +268,6 @@ export default function FileUpload({
             </div>
 
             <ErrorMessage message={error || ''} className="mb-4" />
-
-            {hasOcrCompatibleFiles && onOcrToggle && (
-                <div className="flex items-center">
-                    <input
-                        id="ocr-toggle"
-                        type="checkbox"
-                        className="h-4 w-4 text-gold-500 focus:ring-gold-500 border-gray-300 rounded cursor-pointer"
-                        checked={useOcr}
-                        onChange={(e) => onOcrToggle(e.target.checked)}
-                    />
-                    <label htmlFor="ocr-toggle" className="ml-2 block text-sm text-gray-700 dark:text-gray-300 cursor-pointer">
-                        Enable OCR for scanned documents and images
-                        <span className="block text-xs text-gray-500 dark:text-gray-400">
-                            Uses Azure Computer Vision to extract text from scanned PDFs and images
-                        </span>
-                    </label>
-                </div>
-            )}
 
             {files.length > 0 && (
                 <div className="space-y-2">

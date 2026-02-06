@@ -12,9 +12,10 @@ import { useSidebar } from '@/contexts/SidebarContext';
 interface NavigationProps {
     history?: AnalysisHistory[];
     onHistoryUpdated?: () => void;
+    onChatWithDocument?: (documentId: string) => void;
 }
 
-export default function Navigation({ history = [], onHistoryUpdated }: NavigationProps) {
+export default function Navigation({ history = [], onHistoryUpdated, onChatWithDocument }: NavigationProps) {
     const { data: session, status } = useSession();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const { isOpen, close } = useSidebar();
@@ -52,9 +53,10 @@ export default function Navigation({ history = [], onHistoryUpdated }: Navigatio
                 isOpen={isOpen}
                 onClose={close}
                 onHistoryUpdated={onHistoryUpdated}
+                onChatWithDocument={onChatWithDocument}
             />
 
-            <nav className={`fixed top-0 right-0 left-0 z-30 bg-gray-100 dark:bg-[#1E1E1E] transition-all duration-300 ease-in-out ${isOpen ? 'pl-64' : 'pl-16'}`}>
+            <nav className={`fixed top-0 right-0 left-0 z-30 bg-gray-100 dark:bg-[#1E1E1E] transition-all duration-300 ease-in-out ${isOpen ? 'pl-72' : 'pl-16'}`}>
                 <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
                     <div className="flex justify-between h-16">
                         <div className="flex items-center">

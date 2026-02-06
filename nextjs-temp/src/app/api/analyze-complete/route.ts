@@ -7,6 +7,7 @@ import mammoth from 'mammoth';
 
 import { supabaseAdmin } from '@/lib/supabase';
 import { v4 as uuidv4 } from 'uuid';
+import { checkAnalysisLimit } from '@/utils/usageLimits';
 
 // File type constants
 const FILE_TYPES = {
@@ -19,6 +20,22 @@ const FILE_TYPES = {
 export async function POST(req: NextRequest) {
     try {
         console.log('Complete analyze endpoint called');
+
+        // Check authentication and usage limits
+        const session = await getServerSession(authOptions);
+        if (session?.user?.id) {
+            const usageStatus = await checkAnalysisLimit(session.user.id);
+            if (usageStatus.limitReached) {
+                return NextResponse.json(
+                    {
+                        error: 'Usage limit reached',
+                        message: `You have reached the maximum of ${usageStatus.limit} analyses. Please delete an existing analysis to create a new one.`,
+                        usage: usageStatus,
+                    },
+                    { status: 429 }
+                );
+            }
+        }
 
         // Check if the request is multipart/form-data
         const contentType = req.headers.get('content-type');

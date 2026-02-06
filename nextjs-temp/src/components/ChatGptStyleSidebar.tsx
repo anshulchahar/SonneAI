@@ -1,12 +1,12 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Link from 'next/link';
 import { AnalysisHistory } from '@/types/api';
 import { formatDate } from '@/utils/formatters';
 import { useSidebar } from '@/contexts/SidebarContext';
-import { TrashIcon, DocumentTextIcon, ChevronLeftIcon, BookOpenIcon } from '@heroicons/react/24/outline';
+import { TrashIcon, DocumentTextIcon, ChevronLeftIcon, BookOpenIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
 import ConfirmationModal from './ConfirmationModal';
 
@@ -15,15 +15,18 @@ interface ChatGptStyleSidebarProps {
     isOpen: boolean;
     onClose: () => void;
     onHistoryUpdated?: () => void;
+    onChatWithDocument?: (documentId: string) => void;
 }
 
 export default function ChatGptStyleSidebar({
     history,
     isOpen,
     onClose,
-    onHistoryUpdated
+    onHistoryUpdated,
+    onChatWithDocument
 }: ChatGptStyleSidebarProps) {
     const pathname = usePathname();
+    const router = useRouter();
     const { toggle } = useSidebar();
     const [deleteConfirmation, setDeleteConfirmation] = useState<{
         isOpen: boolean;
@@ -35,6 +38,75 @@ export default function ChatGptStyleSidebar({
         itemName: null
     });
     const [isDeleting, setIsDeleting] = useState(false);
+    const [ingestingIds, setIngestingIds] = useState<Set<string>>(new Set());
+
+    const handleChatClick = async (e: React.MouseEvent, item: AnalysisHistory) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (ingestingIds.has(item.id)) return;
+
+        setIngestingIds(prev => new Set(prev).add(item.id));
+
+        try {
+            // Fetch the analysis to get the document text
+            const analysisRes = await fetch(`/api/analysis/${item.id}`);
+            if (!analysisRes.ok) throw new Error('Failed to fetch analysis');
+
+            const analysisData = await analysisRes.json();
+
+            // Create a text blob from the analysis content to ingest as a RAG document
+            const textContent = [
+                analysisData.summary || '',
+                ...(analysisData.keyPoints || []),
+                ...(analysisData.recommendations || []),
+                analysisData.analysis?.details || '',
+            ].filter(Boolean).join('\n\n');
+
+            if (!textContent.trim()) {
+                throw new Error('No content found in analysis');
+            }
+
+            // Create a File-like blob and send to RAG ingest
+            const blob = new Blob([textContent], { type: 'text/plain' });
+            const file = new File([blob], item.filename, { type: 'text/plain' });
+
+            const formData = new FormData();
+            formData.append('files', file);
+
+            const ingestRes = await fetch('/api/rag/ingest', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!ingestRes.ok) {
+                const errData = await ingestRes.json();
+                throw new Error(errData.error || 'Ingestion failed');
+            }
+
+            const ingestData = await ingestRes.json();
+            const newDocId = ingestData.documents?.[0]?.document_id;
+
+            toast.success(`"${item.filename}" added for chat`);
+
+            // Notify parent to switch to chat tab and select the new document
+            if (onChatWithDocument && newDocId) {
+                onChatWithDocument(newDocId);
+            } else {
+                // Fallback: navigate to chat tab
+                router.push('/?tab=chat');
+            }
+        } catch (error) {
+            console.error('Error ingesting for chat:', error);
+            toast.error(error instanceof Error ? error.message : 'Failed to add document for chat');
+        } finally {
+            setIngestingIds(prev => {
+                const next = new Set(prev);
+                next.delete(item.id);
+                return next;
+            });
+        }
+    };
 
     const handleDeleteClick = (e: React.MouseEvent, item: AnalysisHistory) => {
         e.preventDefault();
@@ -168,7 +240,7 @@ export default function ChatGptStyleSidebar({
                                                     : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800/60 border border-transparent hover:border-primary/20 dark:hover:border-primary-light/20'}
                                             `}
                                         >
-                                            <div className="flex flex-col space-y-1 pr-7">
+                                            <div className="flex flex-col space-y-1 pr-14">
                                                 <span className={`font-medium truncate ${isActive ? 'text-primary dark:text-primary-light' : ''}`}>
                                                     {item.filename}
                                                 </span>
@@ -179,21 +251,31 @@ export default function ChatGptStyleSidebar({
                                             </div>
                                         </Link>
 
-                                        {/* Enhanced delete button with curved design */}
-                                        <button
-                                            onClick={(e) => handleDeleteClick(e, item)}
-                                            className={`
-                                                absolute right-3 top-1/2 -translate-y-1/2
-                                                p-1.5 rounded-full
-                                                text-gray-400 hover:text-red-500 dark:text-gray-500 dark:hover:text-red-400
-                                                hover:bg-red-50 dark:hover:bg-red-900/20
-                                                transition-all duration-150
-                                                ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}
-                                            `}
-                                            aria-label={`Delete ${item.filename}`}
-                                        >
-                                            <TrashIcon className="h-4 w-4" />
-                                        </button>
+                                        {/* Action buttons */}
+                                        <div className={`absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-0.5 ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} transition-all duration-150`}>
+                                            {/* Chat icon — ingest for RAG */}
+                                            <button
+                                                onClick={(e) => handleChatClick(e, item)}
+                                                disabled={ingestingIds.has(item.id)}
+                                                className={`p-1.5 rounded-full transition-all duration-150 ${ingestingIds.has(item.id)
+                                                    ? 'text-primary animate-pulse'
+                                                    : 'text-gray-400 hover:text-primary dark:text-gray-500 dark:hover:text-primary-light hover:bg-primary/10 dark:hover:bg-primary/20'
+                                                    }`}
+                                                aria-label={`Add ${item.filename} for chat`}
+                                                title="Add to chat — process with embeddings"
+                                            >
+                                                <ChatBubbleLeftRightIcon className="h-4 w-4" />
+                                            </button>
+
+                                            {/* Delete button */}
+                                            <button
+                                                onClick={(e) => handleDeleteClick(e, item)}
+                                                className="p-1.5 rounded-full text-gray-400 hover:text-red-500 dark:text-gray-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-150"
+                                                aria-label={`Delete ${item.filename}`}
+                                            >
+                                                <TrashIcon className="h-4 w-4" />
+                                            </button>
+                                        </div>
                                     </div>
                                 );
                             })}

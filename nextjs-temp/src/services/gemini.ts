@@ -19,7 +19,7 @@ const MODEL_VARIATIONS = [
 
 export class GeminiService {
     private apiKey: string;
-    private modelName = 'gemini-2.0-flash'; // Using the model that's available according to ListModels response
+    private modelName = 'gemini-3-flash-preview'; // Latest Gemini 3 Flash preview model
     private genAI: GoogleGenerativeAI;
     private model: GenerativeModel;
 
