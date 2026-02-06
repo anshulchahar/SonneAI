@@ -14,9 +14,11 @@ import OutputLengthSlider from '@/components/OutputLengthSlider';
 import DocumentLibrary, { RAGDocument } from '@/components/DocumentLibrary';
 import RAGChatPanel from '@/components/RAGChatPanel';
 import DocumentUploader from '@/components/DocumentUploader';
+import UsageBanner from '@/components/UsageBanner';
 import { AnalysisResult, AnalysisHistory } from '@/types/api';
 import { AnalysisData } from '@/types/analysis';
 import { useSidebar } from '@/contexts/SidebarContext';
+import { useUsageLimits } from '@/hooks/useUsageLimits';
 
 type ActiveTab = 'analyze' | 'chat';
 
@@ -28,6 +30,7 @@ export default function Home() {
   const { data: session } = useSession();
   const { isOpen } = useSidebar();
   const searchParams = useSearchParams();
+  const { usage, canAnalyze, canChat, refetch: refetchUsage } = useUsageLimits();
 
   // --- Shared state ---
   const [activeTab, setActiveTab] = useState<ActiveTab>(() => {
@@ -219,6 +222,11 @@ export default function Home() {
       return;
     }
 
+    if (!canAnalyze) {
+      setAnalyzeError(`You have reached the maximum of ${usage?.analyses.limit ?? 4} analyses. Please delete an existing analysis to create a new one.`);
+      return;
+    }
+
     setIsAnalyzing(true);
     setProgress(0);
     setError(null);
@@ -253,9 +261,18 @@ export default function Home() {
         if (xhr.status === 200) {
           const result = JSON.parse(xhr.responseText);
           setAnalysisResult(result);
+          refetchUsage();
 
           if (session?.user) {
             fetchHistory();
+          }
+        } else if (xhr.status === 429) {
+          try {
+            const errorResponse = JSON.parse(xhr.responseText);
+            setError(errorResponse.message || 'Usage limit reached. Please delete an existing analysis to create a new one.');
+            refetchUsage();
+          } catch {
+            setError('Usage limit reached. Please delete an existing analysis to create a new one.');
           }
         } else {
           try {
@@ -301,7 +318,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-[#1E1E1E] transition-colors duration-200">
-      <Navigation history={history} onHistoryUpdated={fetchHistory} onChatWithDocument={handleChatWithDocument} />
+      <Navigation history={history} onHistoryUpdated={() => { fetchHistory(); refetchUsage(); }} onChatWithDocument={handleChatWithDocument} />
 
       <div className={`pt-16 h-[calc(100vh)] flex flex-col transition-all duration-300 ease-in-out ${isOpen ? 'pl-72' : 'pl-16'}`}>
 
@@ -354,6 +371,13 @@ export default function Home() {
           <div className="flex-1 overflow-y-auto pb-24">
             <div className="px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 w-full">
               <div className="mx-auto w-full md:w-[90%] lg:w-[85%] xl:w-[90%] 2xl:w-[95%]">
+
+                {/* Usage limit banner for analyses */}
+                {session?.user && (
+                  <div className="mt-6">
+                    <UsageBanner type="analysis" />
+                  </div>
+                )}
 
                 {analysisResult ? (
                   <div className="space-y-6 shadow-sm rounded-lg p-6 dark:bg-[#1E1E1E] bg-gray-50 mt-8">
@@ -479,8 +503,8 @@ export default function Home() {
                               <button
                                 ref={buttonRef}
                                 onClick={handleAnalyze}
-                                disabled={isAnalyzing || isIngesting}
-                                className={`px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200 ${isAnalyzing || isIngesting ? 'opacity-50 cursor-not-allowed' : ''
+                                disabled={isAnalyzing || isIngesting || !canAnalyze}
+                                className={`px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200 ${isAnalyzing || isIngesting || !canAnalyze ? 'opacity-50 cursor-not-allowed' : ''
                                   }`}
                               >
                                 <span className="brightness-110">Analyze Document</span>
@@ -556,7 +580,7 @@ export default function Home() {
                   documents={ragDocuments}
                   selectedDocIds={selectedDocIds}
                   onSelectionChange={setSelectedDocIds}
-                  onDocumentsChanged={fetchRAGDocuments}
+                  onDocumentsChanged={() => { fetchRAGDocuments(); refetchUsage(); }}
                   isLoading={isLoadingDocs}
                 />
 
@@ -584,6 +608,12 @@ export default function Home() {
 
             {/* Chat Panel */}
             <div className="flex-1 flex flex-col bg-gray-50 dark:bg-[#1E1E1E]">
+              {/* Usage limit banner for conversations */}
+              {session?.user && (
+                <div className="px-4 pt-3">
+                  <UsageBanner type="conversation" />
+                </div>
+              )}
               <RAGChatPanel
                 selectedDocIds={selectedDocIds}
                 hasDocuments={ragDocuments.length > 0}

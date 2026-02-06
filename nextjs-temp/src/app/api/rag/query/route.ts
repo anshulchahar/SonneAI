@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/config/auth';
 import { RAGService } from '@/services/rag';
+import { checkConversationLimit } from '@/utils/usageLimits';
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
@@ -29,6 +30,21 @@ export async function POST(req: NextRequest) {
                 { error: 'Question is required' },
                 { status: 400 }
             );
+        }
+
+        // Check conversation limit only when starting a new conversation
+        if (!conversation_id) {
+            const usageStatus = await checkConversationLimit(session.user.id);
+            if (usageStatus.limitReached) {
+                return NextResponse.json(
+                    {
+                        error: 'Usage limit reached',
+                        message: `You have reached the maximum of ${usageStatus.limit} conversations. Please delete an existing conversation to start a new one.`,
+                        usage: usageStatus,
+                    },
+                    { status: 429 }
+                );
+            }
         }
 
         const ragService = new RAGService();

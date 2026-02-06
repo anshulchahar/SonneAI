@@ -45,4 +45,6 @@ export const ERROR_MESSAGES = {
     UNAUTHORIZED: 'Please sign in to continue',
     ANALYSIS_FAILED: 'Failed to analyze document',
     FETCH_FAILED: 'Failed to fetch data',
+    ANALYSIS_LIMIT_REACHED: 'You have reached the maximum number of analyses. Please delete an existing analysis to create a new one.',
+    CONVERSATION_LIMIT_REACHED: 'You have reached the maximum number of conversations. Please delete an existing conversation to start a new one.',
 } as const;

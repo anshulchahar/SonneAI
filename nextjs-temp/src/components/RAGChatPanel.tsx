@@ -106,6 +106,9 @@ export default function RAGChatPanel({ selectedDocIds, hasDocuments }: RAGChatPa
 
             if (!res.ok) {
                 const errorData = await res.json();
+                if (res.status === 429) {
+                    throw new Error(errorData.message || 'You have reached the conversation limit. Please delete an existing conversation to start a new one.');
+                }
                 throw new Error(errorData.error || 'Failed to get response');
             }
 
