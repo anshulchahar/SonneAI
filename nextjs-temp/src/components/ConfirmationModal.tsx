@@ -1,7 +1,7 @@
 'use client';
 
-import { Fragment, useRef } from 'react';
-import { Dialog, Transition } from '@headlessui/react';
+import { useRef } from 'react';
+import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@headlessui/react';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 
 interface ConfirmationModalProps {
@@ -28,10 +28,9 @@ export default function ConfirmationModal({
     const cancelButtonRef = useRef(null);
 
     return (
-        <Transition.Root show={isOpen} as={Fragment}>
+        <Transition show={isOpen}>
             <Dialog as="div" className="relative z-50" initialFocus={cancelButtonRef} onClose={onCancel}>
-                <Transition.Child
-                    as={Fragment}
+                <TransitionChild
                     enter="ease-out duration-300"
                     enterFrom="opacity-0"
                     enterTo="opacity-100"
@@ -40,12 +39,11 @@ export default function ConfirmationModal({
                     leaveTo="opacity-0"
                 >
                     <div className="fixed inset-0 bg-gray-500 dark:bg-gray-900 bg-opacity-75 dark:bg-opacity-75 transition-opacity" />
-                </Transition.Child>
+                </TransitionChild>
 
                 <div className="fixed inset-0 z-10 overflow-y-auto">
                     <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-                        <Transition.Child
-                            as={Fragment}
+                        <TransitionChild
                             enter="ease-out duration-300"
                             enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                             enterTo="opacity-100 translate-y-0 sm:scale-100"
@@ -53,7 +51,7 @@ export default function ConfirmationModal({
                             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                         >
-                            <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white dark:bg-[#1E1E1E] text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                            <DialogPanel className="relative transform overflow-hidden rounded-lg bg-white dark:bg-[#1E1E1E] text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
                                 <div className="bg-white dark:bg-[#1E1E1E] px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                                     <div className="sm:flex sm:items-start">
                                         {isDestructive && (
@@ -62,9 +60,9 @@ export default function ConfirmationModal({
                                             </div>
                                         )}
                                         <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                                            <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
+                                            <DialogTitle as="h3" className="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">
                                                 {title}
-                                            </Dialog.Title>
+                                            </DialogTitle>
                                             <div className="mt-2">
                                                 <p className="text-sm text-gray-500 dark:text-gray-400">
                                                     {message}
@@ -94,11 +92,11 @@ export default function ConfirmationModal({
                                         {cancelText}
                                     </button>
                                 </div>
-                            </Dialog.Panel>
-                        </Transition.Child>
+                            </DialogPanel>
+                        </TransitionChild>
                     </div>
                 </div>
             </Dialog>
-        </Transition.Root>
+        </Transition>
     );
 }

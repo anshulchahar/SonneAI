@@ -7,18 +7,11 @@ repos:
       - id: check-yaml
       - id: check-added-large-files
 
-  - repo: https://github.com/pycqa/flake8
-    rev: 6.0.0
-    hooks:
-      - id: flake8
-        additional_dependencies: [flake8-docstrings]
-
   - repo: local
     hooks:
       - id: eslint
         name: eslint
         entry: npx eslint
         language: node
-        types: [javascript]
-        files: \.(js)$
-        args: ["--config", "eslint.config.js"]
+        types_or: [javascript, typescript, tsx]
+        files: \.(js|ts|tsx)$

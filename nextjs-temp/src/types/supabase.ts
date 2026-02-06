@@ -45,8 +45,9 @@ export interface Database {
           filename: string
           fileContent: string | null
           summary: string | null
-          analysisResult: Json | null
-          recommendations: Json | null
+          keyPoints: string | null
+          analysis: string | null
+          recommendations: string | null
           createdAt: Date
           updatedAt: Date
         }
@@ -56,8 +57,9 @@ export interface Database {
           filename: string
           fileContent?: string | null
           summary?: string | null
-          analysisResult?: Json | null
-          recommendations?: Json | null
+          keyPoints?: string | null
+          analysis?: string | null
+          recommendations?: string | null
           createdAt?: Date
           updatedAt?: Date
         }
@@ -67,8 +69,9 @@ export interface Database {
           filename?: string
           fileContent?: string | null
           summary?: string | null
-          analysisResult?: Json | null
-          recommendations?: Json | null
+          keyPoints?: string | null
+          analysis?: string | null
+          recommendations?: string | null
           createdAt?: Date
           updatedAt?: Date
         }
@@ -149,12 +152,217 @@ export interface Database {
           updated_at?: Date
         }
       }
+      documents: {
+        Row: {
+          id: string
+          userId: string
+          filename: string
+          file_type: string
+          file_size: number | null
+          page_count: number | null
+          content: string | null
+          metadata: Json
+          created_at: Date
+          updated_at: Date
+        }
+        Insert: {
+          id?: string
+          userId: string
+          filename: string
+          file_type: string
+          file_size?: number | null
+          page_count?: number | null
+          content?: string | null
+          metadata?: Json
+          created_at?: Date
+          updated_at?: Date
+        }
+        Update: {
+          id?: string
+          userId?: string
+          filename?: string
+          file_type?: string
+          file_size?: number | null
+          page_count?: number | null
+          content?: string | null
+          metadata?: Json
+          created_at?: Date
+          updated_at?: Date
+        }
+      }
+      document_chunks: {
+        Row: {
+          id: string
+          document_id: string
+          userId: string
+          chunk_index: number
+          content: string
+          token_count: number | null
+          embedding: string | null
+          metadata: Json
+          created_at: Date
+        }
+        Insert: {
+          id?: string
+          document_id: string
+          userId: string
+          chunk_index: number
+          content: string
+          token_count?: number | null
+          embedding?: string | null
+          metadata?: Json
+          created_at?: Date
+        }
+        Update: {
+          id?: string
+          document_id?: string
+          userId?: string
+          chunk_index?: number
+          content?: string
+          token_count?: number | null
+          embedding?: string | null
+          metadata?: Json
+          created_at?: Date
+        }
+      }
+      conversations: {
+        Row: {
+          id: string
+          userId: string
+          title: string | null
+          document_ids: string[]
+          created_at: Date
+          updated_at: Date
+        }
+        Insert: {
+          id?: string
+          userId: string
+          title?: string | null
+          document_ids?: string[]
+          created_at?: Date
+          updated_at?: Date
+        }
+        Update: {
+          id?: string
+          userId?: string
+          title?: string | null
+          document_ids?: string[]
+          created_at?: Date
+          updated_at?: Date
+        }
+      }
+      messages: {
+        Row: {
+          id: string
+          conversation_id: string
+          userId: string
+          role: 'user' | 'assistant' | 'system'
+          content: string
+          sources: Json
+          token_count: number | null
+          created_at: Date
+        }
+        Insert: {
+          id?: string
+          conversation_id: string
+          userId: string
+          role: 'user' | 'assistant' | 'system'
+          content: string
+          sources?: Json
+          token_count?: number | null
+          created_at?: Date
+        }
+        Update: {
+          id?: string
+          conversation_id?: string
+          userId?: string
+          role?: 'user' | 'assistant' | 'system'
+          content?: string
+          sources?: Json
+          token_count?: number | null
+          created_at?: Date
+        }
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      match_document_chunks: {
+        Args: {
+          query_embedding: string
+          match_count?: number
+          filter_user_id?: string
+          filter_document_ids?: string[]
+          similarity_threshold?: number
+        }
+        Returns: {
+          id: string
+          document_id: string
+          chunk_index: number
+          content: string
+          metadata: Json
+          similarity: number
+        }[]
+      }
+      hybrid_search: {
+        Args: {
+          query_text: string
+          query_embedding: string
+          match_count?: number
+          filter_user_id?: string
+          filter_document_ids?: string[]
+          similarity_threshold?: number
+          keyword_weight?: number
+          semantic_weight?: number
+        }
+        Returns: {
+          id: string
+          document_id: string
+          chunk_index: number
+          content: string
+          metadata: Json
+          similarity: number
+          combined_score: number
+        }[]
+      }
+      get_rag_context: {
+        Args: {
+          query_embedding: string
+          p_user_id: string
+          p_document_ids?: string[]
+          p_match_count?: number
+          p_similarity_threshold?: number
+        }
+        Returns: {
+          chunk_id: string
+          document_id: string
+          filename: string
+          chunk_content: string
+          chunk_index: number
+          similarity: number
+          document_metadata: Json
+          chunk_metadata: Json
+        }[]
+      }
+      get_user_document_stats: {
+        Args: {
+          p_user_id: string
+        }
+        Returns: {
+          total_documents: number
+          total_chunks: number
+          total_conversations: number
+          total_analyses: number
+        }[]
+      }
+      delete_document_with_chunks: {
+        Args: {
+          p_document_id: string
+          p_user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never

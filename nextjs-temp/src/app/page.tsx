@@ -33,7 +33,6 @@ export default function Home() {
   const [customPromptUsed, setCustomPromptUsed] = useState<boolean>(false);
   const [outputLength, setOutputLength] = useState(500); // Default output length
   const [history, setHistory] = useState<AnalysisHistory[]>([]);
-  const [useOcr, setUseOcr] = useState(false); // State for OCR toggle
   const { data: session } = useSession();
   const { isOpen } = useSidebar();
 
@@ -106,10 +105,6 @@ export default function Home() {
     setOutputLength(length);
   };
 
-  const handleOcrToggle = (enabled: boolean) => {
-    setUseOcr(enabled);
-  };
-
   const handleSendPrompt = () => {
     if (customPrompt.trim()) {
       setSavedPrompt(customPrompt.trim());
@@ -139,14 +134,11 @@ export default function Home() {
     try {
       const formData = new FormData();
 
-      // Use different endpoints based on whether OCR is enabled
-      const endpoint = useOcr && files.some(file =>
-        file.type === 'application/pdf' || file.type.startsWith('image/')
-      ) ? '/api/ocr' : '/api/analyze-complete';
+      const endpoint = '/api/analyze-complete';
 
       // Add files to the form data
       files.forEach((file) => {
-        formData.append('files', file); // Use consistent 'files' key for both endpoints
+        formData.append('files', file);
       });
 
       // Add the saved custom prompt to the formData if provided
@@ -156,11 +148,6 @@ export default function Home() {
 
       // Add output length parameter to the request
       formData.append('outputLength', outputLength.toString());
-
-      // Add OCR flag for debugging/tracking
-      if (useOcr) {
-        formData.append('useOcr', 'true');
-      }
 
       // Add a progress event listener
       const xhr = new XMLHttpRequest();
@@ -176,32 +163,7 @@ export default function Home() {
       xhr.onload = function () {
         if (xhr.status === 200) {
           const result = JSON.parse(xhr.responseText);
-
-          // Handle OCR results which may have a different structure
-          if (endpoint === '/api/ocr') {
-            // Check if Gemini analysis results are available in the response
-            if (result.analysis) {
-              // Use the Gemini analysis from the OCR response
-              setAnalysisResult(result.analysis);
-            } else {
-              // Fallback to the old behavior if no analysis is provided
-              const ocrResults = result.results;
-
-              // Create a result object that matches the expected AnalysisResult structure
-              const analysisData = {
-                summary: 'Text extracted using OCR technology',
-                keyPoints: ['Text was extracted from scanned documents or images using Azure Computer Vision OCR'],
-                detailedAnalysis: ocrResults.map((r: { info: { filename: string }, text: string }) => `${r.info.filename}:\n${r.text}`).join('\n\n'),
-                recommendations: [],
-                fileInfo: ocrResults.map((r: { info: { filename: string, character_count: number } }) => r.info),
-              };
-
-              setAnalysisResult(analysisData);
-            }
-          } else {
-            // Standard analysis results
-            setAnalysisResult(result);
-          }
+          setAnalysisResult(result);
 
           // If user is logged in, refresh history to include the new analysis
           if (session?.user) {
@@ -211,8 +173,7 @@ export default function Home() {
           try {
             const errorResponse = JSON.parse(xhr.responseText);
             if (errorResponse.error === 'PDF cannot be processed') {
-              // Show toast message for PDF processing error
-              setError('PDF cannot be processed; Reasons: File may be password protected, is a scanned image or corrupt. Try enabling OCR for scanned documents.');
+              setError('PDF cannot be processed; Reasons: File may be password protected, is a scanned image or corrupt.');
               // Clear files to allow new upload
               setFiles([]);
             } else {
@@ -250,7 +211,6 @@ export default function Home() {
     setPromptError(null);
     setDebugInfo(null);
     setCustomPromptUsed(false);
-    setUseOcr(false); // Reset OCR setting
     // Don't reset output length to preserve user preference
   };
 
@@ -283,8 +243,6 @@ export default function Home() {
                       onFilesAdded={handleFilesAdded}
                       onFileRemoved={handleFileRemoved}
                       disabled={isAnalyzing}
-                      useOcr={useOcr}
-                      onOcrToggle={handleOcrToggle}
                     />
 
                     {/* Output Length Slider positioned directly after FileUpload */}

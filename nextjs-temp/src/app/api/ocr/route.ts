@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/config/auth';
 import { supabaseAdmin } from '@/lib/supabase';
 import { v4 as uuidv4 } from 'uuid';
-import ocrService from '@/services/ocr';
+import { getOCRService } from '@/services/ocr';
 import { GeminiService } from '@/services/gemini';
 import { AnalysisResult } from '@/types/api';
 

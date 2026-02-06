@@ -179,6 +179,14 @@ export class OCRService {
     }
 }
 
-// Create a singleton instance
-const ocrService = new OCRService();
-export default ocrService;
+// Lazily-initialized singleton to avoid build-time errors when env vars are missing
+let _ocrService: OCRService | null = null;
+
+export function getOCRService(): OCRService {
+    if (!_ocrService) {
+        _ocrService = new OCRService();
+    }
+    return _ocrService;
+}
+
+export default { getOCRService };

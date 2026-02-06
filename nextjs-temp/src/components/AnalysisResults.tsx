@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Tab } from '@headlessui/react';
+import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
 import { DocumentIcon, AcademicCapIcon, ChatBubbleBottomCenterTextIcon, ClipboardIcon, DocumentDuplicateIcon } from '@heroicons/react/24/outline';
 import { AnalysisData } from '@/types/analysis';
 import DownloadButton from './DownloadButton';
@@ -30,8 +30,8 @@ export default function AnalysisResults({ analysis }: AnalysisResultsProps) {
                     <DownloadButton analysisData={analysis} className="w-full md:w-auto" />
                 </div>
 
-                <Tab.Group>
-                    <Tab.List className="flex p-1 space-x-1 bg-blue-50 dark:bg-[var(--secondary)] rounded-xl overflow-x-auto">
+                <TabGroup>
+                    <TabList className="flex p-1 space-x-1 bg-blue-50 dark:bg-[var(--secondary)] rounded-xl overflow-x-auto">
                         {categories.map((category) => (
                             <Tab
                                 key={category.id}
@@ -49,10 +49,10 @@ export default function AnalysisResults({ analysis }: AnalysisResultsProps) {
                                 {category.name}
                             </Tab>
                         ))}
-                    </Tab.List>
-                    <Tab.Panels className="mt-4">
+                    </TabList>
+                    <TabPanels className="mt-4">
                         {/* Summary Panel */}
-                        <Tab.Panel className="p-3">
+                        <TabPanel className="p-3">
                             <div className="prose dark:prose-invert max-w-none">
                                 <h3 className="text-lg font-medium mb-4 text-gray-900 dark:text-[var(--card-foreground)]">Summary</h3>
                                 <p className="whitespace-pre-line text-gray-700 dark:text-[var(--muted-foreground)]">{analysis.summary || 'No summary available.'}</p>
@@ -76,10 +76,10 @@ export default function AnalysisResults({ analysis }: AnalysisResultsProps) {
                                     </div>
                                 </div>
                             )}
-                        </Tab.Panel>
+                        </TabPanel>
 
                         {/* Key Points Panel */}
-                        <Tab.Panel className="p-3">
+                        <TabPanel className="p-3">
                             <div className="prose dark:prose-invert max-w-none">
                                 <h3 className="text-lg font-medium mb-4 text-gray-900 dark:text-[var(--card-foreground)]">Key Points</h3>
                                 {analysis.keyPoints && analysis.keyPoints.length > 0 ? (
@@ -108,18 +108,18 @@ export default function AnalysisResults({ analysis }: AnalysisResultsProps) {
                                     <p className="text-gray-700 dark:text-[var(--muted-foreground)]">No key points available.</p>
                                 )}
                             </div>
-                        </Tab.Panel>
+                        </TabPanel>
 
                         {/* Detailed Analysis Panel */}
-                        <Tab.Panel className="p-3">
+                        <TabPanel className="p-3">
                             <div className="prose dark:prose-invert max-w-none">
                                 <h3 className="text-lg font-medium mb-4 text-gray-900 dark:text-[var(--card-foreground)]">Detailed Analysis</h3>
                                 <p className="whitespace-pre-line text-gray-700 dark:text-[var(--muted-foreground)]">{analysis.detailedAnalysis || 'No detailed analysis available.'}</p>
                             </div>
-                        </Tab.Panel>
+                        </TabPanel>
 
                         {/* Recommendations Panel */}
-                        <Tab.Panel className="p-3">
+                        <TabPanel className="p-3">
                             <div className="prose dark:prose-invert max-w-none">
                                 <h3 className="text-lg font-medium mb-4 text-gray-900 dark:text-[var(--card-foreground)]">Recommendations</h3>
                                 {analysis.recommendations && analysis.recommendations.length > 0 ? (
@@ -148,10 +148,10 @@ export default function AnalysisResults({ analysis }: AnalysisResultsProps) {
                                     <p className="text-gray-700 dark:text-[var(--muted-foreground)]">No recommendations available.</p>
                                 )}
                             </div>
-                        </Tab.Panel>
+                        </TabPanel>
 
                         {/* Comparison Panel */}
-                        <Tab.Panel className="p-3">
+                        <TabPanel className="p-3">
                             {analysis.documentComparison ? (
                                 <div className="prose dark:prose-invert max-w-none">
                                     <h3 className="text-lg font-medium mb-4 text-gray-900 dark:text-[var(--card-foreground)]">Document Comparison</h3>
@@ -163,9 +163,9 @@ export default function AnalysisResults({ analysis }: AnalysisResultsProps) {
                                     <p className="text-sm mt-2">This feature is available when analyzing multiple documents.</p>
                                 </div>
                             )}
-                        </Tab.Panel>
-                    </Tab.Panels>
-                </Tab.Group>
+                        </TabPanel>
+                    </TabPanels>
+                </TabGroup>
             </div>
         </div>
     );
