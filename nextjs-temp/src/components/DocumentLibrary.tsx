@@ -151,29 +151,33 @@ export default function DocumentLibrary({
                 </div>
             </div>
 
-            {selectedDocIds.length > 0 && (
+            {selectedDocIds.length > 0 ? (
                 <p className="text-xs text-primary dark:text-primary-light">
                     {selectedDocIds.length} document{selectedDocIds.length > 1 ? 's' : ''} selected — questions will search these documents
                 </p>
+            ) : (
+                <p className="text-xs text-gray-400 dark:text-gray-500">
+                    Select documents to scope your chat, or ask across all documents
+                </p>
             )}
 
-            <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
+            <div className="space-y-1.5 max-h-[400px] overflow-y-auto pr-1">
                 {documents.map((doc) => {
                     const isSelected = selectedDocIds.includes(doc.id);
                     return (
                         <div
                             key={doc.id}
                             className={`flex items-center gap-3 p-2.5 rounded-lg border cursor-pointer transition-all duration-150 group ${isSelected
-                                    ? 'border-primary/40 bg-primary/5 dark:bg-primary/10 dark:border-primary/30'
-                                    : 'border-gray-200 dark:border-gray-700 hover:border-primary/20 dark:hover:border-primary/20 bg-white dark:bg-[#2C2C2C]'
+                                ? 'border-primary/40 bg-primary/5 dark:bg-primary/10 dark:border-primary/30'
+                                : 'border-gray-200 dark:border-gray-700 hover:border-primary/20 dark:hover:border-primary/20 bg-white dark:bg-[#2C2C2C]'
                                 }`}
                             onClick={() => toggleSelection(doc.id)}
                         >
                             {/* Checkbox */}
                             <div
                                 className={`flex-shrink-0 w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${isSelected
-                                        ? 'bg-primary border-primary'
-                                        : 'border-gray-300 dark:border-gray-600'
+                                    ? 'bg-primary border-primary'
+                                    : 'border-gray-300 dark:border-gray-600'
                                     }`}
                             >
                                 {isSelected && (

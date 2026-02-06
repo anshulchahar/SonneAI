@@ -1,6 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const EMBEDDING_MODEL = 'text-embedding-004';
+const EMBEDDING_MODEL = 'gemini-embedding-001';
+const EMBEDDING_DIMENSIONS = 768; // Must match Supabase vector(768) column
 const MAX_BATCH_SIZE = 100; // Gemini batch limit
 const CHUNK_SIZE = 1000; // characters per chunk
 const CHUNK_OVERLAP = 200; // overlap between chunks
@@ -17,12 +18,23 @@ export class EmbeddingService {
     }
 
     /**
+     * Truncate embedding to the required dimensions (MRL technique)
+     */
+    private truncateEmbedding(values: number[]): number[] {
+        if (values.length <= EMBEDDING_DIMENSIONS) return values;
+        const truncated = values.slice(0, EMBEDDING_DIMENSIONS);
+        // Normalize the truncated vector
+        const norm = Math.sqrt(truncated.reduce((sum, v) => sum + v * v, 0));
+        return norm > 0 ? truncated.map(v => v / norm) : truncated;
+    }
+
+    /**
      * Generate an embedding for a single text string
      */
     async generateEmbedding(text: string): Promise<number[]> {
         const model = this.genAI.getGenerativeModel({ model: EMBEDDING_MODEL });
         const result = await model.embedContent(text);
-        return result.embedding.values;
+        return this.truncateEmbedding(result.embedding.values);
     }
 
     /**
@@ -38,7 +50,7 @@ export class EmbeddingService {
             const results = await Promise.all(
                 batch.map(async (text) => {
                     const result = await model.embedContent(text);
-                    return result.embedding.values;
+                    return this.truncateEmbedding(result.embedding.values);
                 })
             );
             embeddings.push(...results);

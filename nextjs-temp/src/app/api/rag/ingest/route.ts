@@ -43,11 +43,19 @@ export async function POST(req: NextRequest) {
                 // Extract text based on file type
                 switch (file.type) {
                     case 'application/pdf': {
-                        const pdfParse = (await import('pdf-parse')).default;
                         const pdfData = Buffer.from(buffer);
-                        const result = await pdfParse(pdfData);
-                        text = result.text || '';
-                        pageCount = result.numpages;
+                        try {
+                            // Import from lib/pdf-parse.js directly to bypass index.js
+                            // which runs test code that triggers ENOENT in some Next.js contexts
+                            const pdfParse = (await import('pdf-parse/lib/pdf-parse.js')).default;
+                            // Do NOT override pagerender — the default renderer extracts text properly
+                            const result = await pdfParse(pdfData, { max: 0 });
+                            text = result.text || '';
+                            pageCount = result.numpages;
+                        } catch (pdfError) {
+                            console.error(`PDF parsing error for ${file.name}:`, pdfError);
+                            throw new Error(`Unable to process "${file.name}". Please ensure the file is not password protected and contains readable text.`);
+                        }
                         break;
                     }
                     case 'text/markdown':
@@ -66,7 +74,7 @@ export async function POST(req: NextRequest) {
                 }
 
                 if (!text.trim()) {
-                    throw new Error(`No text content extracted from ${file.name}`);
+                    throw new Error(`No text content could be extracted from "${file.name}". The file may be a scanned image, password-protected, or empty.`);
                 }
 
                 // Determine file type string
