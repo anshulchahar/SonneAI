@@ -91,7 +91,7 @@ jobs:
       timeout-minutes: 5
       
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v4
+      uses: codecov/codecov-action@v5
       with:
         file: ./nextjs-temp/coverage/coverage-final.json
         fail_ci_if_error: false
