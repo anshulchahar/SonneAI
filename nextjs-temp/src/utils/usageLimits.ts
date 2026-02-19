@@ -7,7 +7,7 @@ export const USAGE_LIMITS = {
     /** Maximum number of document analyses per user */
     MAX_ANALYSES: 4,
     /** Maximum number of RAG chat conversations per user */
-    MAX_CONVERSATIONS: 3,
+    MAX_CONVERSATIONS: 6,
 };
 
 export interface UsageStatus {

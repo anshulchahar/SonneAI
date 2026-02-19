@@ -109,7 +109,7 @@ export function SupabaseAdapter(): Adapter {
         .single();
 
       if (error) throw error;
-      
+
       return {
         id: data.id,
         email: data.email,
@@ -169,7 +169,7 @@ export function SupabaseAdapter(): Adapter {
       });
 
       if (error) throw error;
-      
+
       return {
         id: uuidv4(),
         sessionToken,
@@ -224,7 +224,7 @@ export function SupabaseAdapter(): Adapter {
         .single();
 
       if (error) throw error;
-      
+
       return {
         id: data.id,
         sessionToken: data.sessionToken,
