@@ -18,7 +18,10 @@ export function SupabaseAdapter(): Adapter {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('[SupabaseAdapter] createUser failed:', error.message, error.details, error.hint);
+        throw error;
+      }
       return {
         id: uuid,
         email: user.email,
@@ -106,7 +109,7 @@ export function SupabaseAdapter(): Adapter {
         .single();
 
       if (error) throw error;
-      
+
       return {
         id: data.id,
         email: data.email,
@@ -141,7 +144,10 @@ export function SupabaseAdapter(): Adapter {
         session_state: account.session_state,
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('[SupabaseAdapter] linkAccount failed:', error.message, error.details, error.hint);
+        throw error;
+      }
       return account;
     },
 
@@ -163,7 +169,7 @@ export function SupabaseAdapter(): Adapter {
       });
 
       if (error) throw error;
-      
+
       return {
         id: uuidv4(),
         sessionToken,
@@ -218,7 +224,7 @@ export function SupabaseAdapter(): Adapter {
         .single();
 
       if (error) throw error;
-      
+
       return {
         id: data.id,
         sessionToken: data.sessionToken,
